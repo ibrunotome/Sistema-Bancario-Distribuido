@@ -24,6 +24,17 @@ public class UserScreen {
         Account accountAux = new Account();
         accountAux.setUsername(username);
         accountAux.setPassword(password);
+        keyboard.close();
+    }
+
+    public void transference() {
+        String toAccount;
+        Double ammount;
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Digite o número da conta para transferência: ");
+        toAccount = keyboard.nextLine();
+        System.out.println("Digite o valor a ser transferido: ");
+        ammount = keyboard.nextDouble();
     }
 
 }
