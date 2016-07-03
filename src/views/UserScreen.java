@@ -37,4 +37,8 @@ public class UserScreen {
         ammount = keyboard.nextDouble();
     }
 
+    public void getBalance(Account userAccount) {
+        System.out.println("Seu saldo atual é: " + userAccount.getBalance());
+    }
+
 }
