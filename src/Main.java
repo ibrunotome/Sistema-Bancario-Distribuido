@@ -1,5 +1,7 @@
 /**
- * Created by iBrunoTome on 7/3/16.
+ * @author Bruno Tomé
+ * @author Cláudio Menezes
+ * @since 03/07/2016
  */
 public class Main {
     public void main() {
