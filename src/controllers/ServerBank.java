@@ -4,7 +4,9 @@ import models.Account;
 import models.Bank;
 
 /**
- * Created by iBrunoTome on 7/3/16.
+ * @author Bruno Tomé
+ * @author Cláudio Menezes
+ * @since 03/07/2016
  */
 public class ServerBank {
 
@@ -28,15 +30,15 @@ public class ServerBank {
     /**
      * Transfer an amount of cash between two accounts
      *
-     * @param a1
-     * @param a2
+     * @param byUser
+     * @param toUser
      * @param amount
      */
-    public String transference(Account a1, Account a2, Double amount) {
-        Account accountAux = this.BCBank.getAllAccounts().get(a2.getAccountNumber());
-        if (accountAux != null) {
-            if (a1.getBalance() >= amount) {
-                this.BCBank.transference(a1, a2, amount);
+    public String transference(Account byUser, int toUser, Double amount) {
+        Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
+        if (toUserAux != null) {
+            if (byUser.getBalance() >= amount) {
+                this.BCBank.transference(byUser, toUserAux, amount);
                 return "Transferência realizada com sucesso";
             } else {
                 return "ERRO: Saldo insuficiente";

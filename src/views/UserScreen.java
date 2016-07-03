@@ -1,5 +1,6 @@
 package views;
 
+import controllers.ServerBank;
 import models.Account;
 
 import java.util.Scanner;
@@ -11,6 +12,12 @@ import java.util.Scanner;
  */
 public class UserScreen {
 
+    ServerBank server = new ServerBank();
+    Account theUser = new Account();
+
+    /**
+     * Try to login into the system
+     */
     public void login() {
         int accountNumber;
         String password;
@@ -25,20 +32,29 @@ public class UserScreen {
         accountAux.setAccountNumber(accountNumber);
         accountAux.setPassword(password);
         keyboard.close();
+
+        System.out.println(server.login(accountAux));
     }
 
+    /**
+     * Transfer an amount of cash between two accounts
+     */
     public void transference() {
-        String toAccount;
+        int toAccount;
         Double amount;
         Scanner keyboard = new Scanner(System.in);
         System.out.println("Digite o número da conta para transferência: ");
-        toAccount = keyboard.nextLine();
+        toAccount = keyboard.nextInt();
         System.out.println("Digite o valor a ser transferido: ");
         amount = keyboard.nextDouble();
+        this.server.transference(this.theUser, toAccount, amount);
     }
 
-    public void getBalance(Account userAccount) {
-        System.out.println("Seu saldo atual é: " + userAccount.getBalance());
+    /**
+     * Get the balance of the user account
+     */
+    public void getBalance() {
+        System.out.println(this.server.getBalance(this.theUser));
     }
 
 }
