@@ -7,6 +7,7 @@ package models;
  */
 public class Account {
 
+    private int accountNumber;
     private String username;
     private String password;
     private Double balance;
@@ -33,5 +34,13 @@ public class Account {
 
     public void setBalance(Double balance) {
         this.balance = this.balance;
+    }
+
+    public int getAccountNumber() {
+        return this.accountNumber;
+    }
+
+    public void setAccountNumber(int accountNumber) {
+        this.accountNumber = accountNumber;
     }
 }
