@@ -2,6 +2,7 @@ package controllers;
 
 import models.Account;
 import models.Bank;
+import models.MessageTag;
 
 /**
  * @author Bruno Tomé
@@ -18,12 +19,12 @@ public class ServerBank {
      * @param a
      * @return String
      */
-    public String login(Account a) {
+    public MessageTag login(Account a) {
         Account accountAux = this.BCBank.getAllAccounts().get(a.getAccountNumber());
         if (accountAux != null && accountAux.getPassword().equals(a.getPassword())) {
-            return "Login efetuado com sucesso";
+            return MessageTag.LOGIN_SUCCESSFUL;
         } else {
-            return "Conta ou senha inválida";
+            return MessageTag.LOGIN_ERROR;
         }
     }
 
@@ -34,17 +35,17 @@ public class ServerBank {
      * @param toUser
      * @param amount
      */
-    public String transference(Account byUser, int toUser, Double amount) {
+    public MessageTag transference(Account byUser, int toUser, Double amount) {
         Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
         if (toUserAux != null) {
             if (byUser.getBalance() >= amount) {
                 this.BCBank.transference(byUser, toUserAux, amount);
-                return "Transferência realizada com sucesso";
+                return MessageTag.TRANSFER_SUCCESSFUL;
             } else {
-                return "ERRO: Saldo insuficiente";
+                return MessageTag.TRANSFER_ERROR_AMOUNT;
             }
         } else {
-            return "ERRO: Conta inexistente";
+            return MessageTag.TRANSFER_ERROR_ACCOUNT;
         }
     }
 

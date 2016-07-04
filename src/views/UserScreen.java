@@ -2,6 +2,7 @@ package views;
 
 import controllers.ServerBank;
 import models.Account;
+import org.jgroups.JChannel;
 
 import java.util.Scanner;
 
@@ -14,6 +15,7 @@ public class UserScreen {
 
     ServerBank server = new ServerBank();
     Account theUser = new Account();
+    JChannel channel;
 
     /**
      * Try to login into the system
