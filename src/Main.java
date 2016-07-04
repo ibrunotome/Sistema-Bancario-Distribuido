@@ -1,3 +1,5 @@
+import views.UserScreen;
+
 /**
  * @author Bruno Tomé
  * @author Cláudio Menezes
@@ -5,7 +7,8 @@
  */
 public class Main {
     public static void main(String args[]) {
-        System.out.println("Hello world");
+        UserScreen screen = new UserScreen();
+        screen.login();
     }
 }
 

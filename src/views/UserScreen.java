@@ -1,7 +1,9 @@
 package views;
 
+import controllers.MessageAlert;
 import controllers.ServerBank;
 import models.Account;
+import models.MessageAlertTag;
 import org.jgroups.JChannel;
 
 import java.util.Scanner;
@@ -24,18 +26,20 @@ public class UserScreen {
         int accountNumber;
         String password;
         Scanner keyboard = new Scanner(System.in);
-
-        System.out.println("Número da conta: ");
-        accountNumber = keyboard.nextInt();
-        System.out.println("Senha: ");
-        password = keyboard.nextLine();
-
         Account accountAux = new Account();
-        accountAux.setAccountNumber(accountNumber);
-        accountAux.setPassword(password);
-        keyboard.close();
+        MessageAlertTag messageAlertTag;
+        do {
+            System.out.print("Número da conta: ");
+            accountNumber = Integer.parseInt(keyboard.nextLine());
+            System.out.print("Senha: ");
+            password = keyboard.nextLine();
+            accountAux.setAccountNumber(accountNumber);
+            accountAux.setPassword(password);
+            messageAlertTag = server.login(accountAux);
+            System.out.println(MessageAlert.toString(messageAlertTag));
+        } while (messageAlertTag != MessageAlertTag.LOGIN_SUCCESSFUL);
 
-        System.out.println(server.login(accountAux));
+        keyboard.close();
     }
 
     /**

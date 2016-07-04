@@ -2,7 +2,7 @@ package controllers;
 
 import models.Account;
 import models.Bank;
-import models.MessageTag;
+import models.MessageAlertTag;
 
 /**
  * @author Bruno Tomé
@@ -19,12 +19,12 @@ public class ServerBank {
      * @param a
      * @return String
      */
-    public MessageTag login(Account a) {
+    public MessageAlertTag login(Account a) {
         Account accountAux = this.BCBank.getAllAccounts().get(a.getAccountNumber());
         if (accountAux != null && accountAux.getPassword().equals(a.getPassword())) {
-            return MessageTag.LOGIN_SUCCESSFUL;
+            return MessageAlertTag.LOGIN_SUCCESSFUL;
         } else {
-            return MessageTag.LOGIN_ERROR;
+            return MessageAlertTag.LOGIN_ERROR;
         }
     }
 
@@ -35,17 +35,17 @@ public class ServerBank {
      * @param toUser
      * @param amount
      */
-    public MessageTag transference(Account byUser, int toUser, Double amount) {
+    public MessageAlertTag transference(Account byUser, int toUser, Double amount) {
         Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
         if (toUserAux != null) {
             if (byUser.getBalance() >= amount) {
                 this.BCBank.transference(byUser, toUserAux, amount);
-                return MessageTag.TRANSFER_SUCCESSFUL;
+                return MessageAlertTag.TRANSFER_SUCCESSFUL;
             } else {
-                return MessageTag.TRANSFER_ERROR_AMOUNT;
+                return MessageAlertTag.TRANSFER_ERROR_AMOUNT;
             }
         } else {
-            return MessageTag.TRANSFER_ERROR_ACCOUNT;
+            return MessageAlertTag.TRANSFER_ERROR_ACCOUNT;
         }
     }
 

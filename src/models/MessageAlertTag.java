@@ -5,7 +5,7 @@ package models;
  * @author Cláudio Menezes
  * @since 04/07/2016
  */
-public enum MessageTag {
+public enum MessageAlertTag {
     LOGIN_SUCCESSFUL,
     LOGIN_ERROR,
     TRANSFER_SUCCESSFUL,
