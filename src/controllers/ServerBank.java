@@ -19,12 +19,12 @@ public class ServerBank {
      * @param a
      * @return String
      */
-    public MessageAlertTag login(Account a) {
+    public Account login(Account a) {
         Account accountAux = this.BCBank.getAllAccounts().get(a.getAccountNumber());
         if (accountAux != null && accountAux.getPassword().equals(a.getPassword())) {
-            return MessageAlertTag.LOGIN_SUCCESSFUL;
+            return accountAux;
         } else {
-            return MessageAlertTag.LOGIN_ERROR;
+            return null;
         }
     }
 
@@ -38,9 +38,11 @@ public class ServerBank {
     public MessageAlertTag transference(Account byUser, int toUser, Double amount) {
         Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
         if (toUserAux != null) {
-            if (byUser.getBalance() >= amount) {
+            if (byUser.getBalance() >= amount && amount > 0) {
                 this.BCBank.transference(byUser, toUserAux, amount);
                 return MessageAlertTag.TRANSFER_SUCCESSFUL;
+            } else if (amount <= 0) {
+                return MessageAlertTag.TRANSFER_ERROR_NEGATIVE;
             } else {
                 return MessageAlertTag.TRANSFER_ERROR_AMOUNT;
             }

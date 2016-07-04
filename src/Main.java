@@ -8,7 +8,8 @@ import views.UserScreen;
 public class Main {
     public static void main(String args[]) {
         UserScreen screen = new UserScreen();
+        screen.prepareGUI();
         screen.login();
+        //screen.login();
     }
 }
-

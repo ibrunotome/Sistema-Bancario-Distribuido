@@ -33,7 +33,7 @@ public class Account {
     }
 
     public void setBalance(Double balance) {
-        this.balance = this.balance;
+        this.balance = balance;
     }
 
     public int getAccountNumber() {

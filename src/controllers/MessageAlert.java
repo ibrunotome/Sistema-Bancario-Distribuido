@@ -18,6 +18,8 @@ public class MessageAlert {
                 return "ERRO: Conta ou senha inválida";
             case TRANSFER_SUCCESSFUL:
                 return "Transferência realizada com sucesso";
+            case TRANSFER_ERROR_NEGATIVE:
+                return "ERRO: Valor de transferência deve ser positivo";
             case TRANSFER_ERROR_AMOUNT:
                 return "ERRO: Saldo insuficiente";
             case TRANSFER_ERROR_ACCOUNT:
