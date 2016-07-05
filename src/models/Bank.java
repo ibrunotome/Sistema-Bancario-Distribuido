@@ -1,6 +1,10 @@
 package models;
 
 import java.util.Hashtable;
+import java.util.Map;
+
+import static com.sun.tools.doclint.Entity.sum;
+import static java.lang.System.in;
 
 /**
  * @author Bruno Tomé
@@ -23,7 +27,7 @@ public class Bank {
         for (int i = 0; i < this.totalAccounts; i++) {
             Account a = new Account();
             a.setAccountNumber(i);
-            a.setUsername("user" + i);
+            a.setName("user" + i);
             a.setPassword("pass" + i);
             a.setBalance(this.totalCash / this.totalAccounts);
             this.allAccounts.put(a.getAccountNumber(), a);
@@ -52,7 +56,7 @@ public class Bank {
      * @return String
      */
     public String getBalance(Account a) {
-        return "O saldo da conta " + a.getAccountNumber() + " é: R$" + a.getBalance();
+        return "O saldo da conta " + a.getAccountNumber() + " é: R$ " + a.getBalance();
     }
 
     /**
@@ -66,5 +70,14 @@ public class Bank {
 
     public Hashtable<Integer, Account> getAllAccounts() {
         return this.allAccounts;
+    }
+
+    @Override
+    public String toString() {
+        Double total = 0.0;
+        for (Account a : this.allAccounts.values()) {
+            total += a.getBalance();
+        }
+        return this.allAccounts.toString() + "\n\nTotal: R$ " + total;
     }
 }

@@ -8,16 +8,16 @@ package models;
 public class Account {
 
     private int accountNumber;
-    private String username;
+    private String name;
     private String password;
     private Double balance;
 
-    public String getUsername() {
-        return this.username;
+    public String getName() {
+        return this.name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
@@ -29,7 +29,7 @@ public class Account {
     }
 
     public Double getBalance() {
-        return balance;
+        return this.balance;
     }
 
     public void setBalance(Double balance) {
@@ -42,5 +42,10 @@ public class Account {
 
     public void setAccountNumber(int accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "\n----------------------------\nNome: " + this.name + "\nSaldo: R$ " + this.balance + "\n----------------------------\n";
     }
 }

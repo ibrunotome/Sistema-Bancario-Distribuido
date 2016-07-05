@@ -11,7 +11,6 @@ import java.awt.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Scanner;
 
 /**
  * @author Bruno Tomé
@@ -24,7 +23,7 @@ public class UserScreen {
     private Account theUser = new Account();
     private JChannel channel;
 
-    // JSwing variables
+    // GUI variables
     private JFrame mainFrame;
     private JLabel headerLabel;
     private JLabel statusLabel;
@@ -35,7 +34,7 @@ public class UserScreen {
     }
 
     public void prepareGUI() {
-        this.mainFrame = new JFrame("Login BCBank");
+        this.mainFrame = new JFrame("BCBank");
         this.mainFrame.setSize(400, 400);
         this.mainFrame.setLayout(new GridLayout(3, 1));
         this.mainFrame.addWindowListener(new WindowAdapter() {
@@ -56,6 +55,51 @@ public class UserScreen {
         this.mainFrame.setResizable(false);
     }
 
+    private void showMenu() {
+        this.headerLabel.setText("MENU");
+        JButton transferButton = new JButton("Transferir");
+        transferButton.addActionListener(e -> {
+            this.controlPanel.removeAll();
+            this.mainFrame.setVisible(false);
+            this.statusLabel.setVisible(false);
+            this.transference();
+        });
+
+        JButton showBalanceButton = new JButton("Meu Saldo");
+        showBalanceButton.addActionListener(e -> {
+            this.controlPanel.removeAll();
+            this.mainFrame.setVisible(false);
+            this.statusLabel.setVisible(false);
+            this.getBalance();
+        });
+
+        JButton extract = new JButton("Extrato");
+        extract.addActionListener(e -> {
+            this.controlPanel.removeAll();
+            this.mainFrame.setVisible(false);
+            this.statusLabel.setVisible(false);
+            this.getBalance();
+        });
+
+        JButton totalBankMoney = new JButton("Soma");
+        totalBankMoney.addActionListener(e -> {
+            this.controlPanel.removeAll();
+            this.mainFrame.setVisible(false);
+            this.statusLabel.setVisible(false);
+            this.totalBankMoney();
+        });
+
+        JButton exit = new JButton("Sair");
+        exit.addActionListener(e -> System.exit(0));
+
+        this.controlPanel.add(transferButton);
+        this.controlPanel.add(showBalanceButton);
+        this.controlPanel.add(extract);
+        this.controlPanel.add(totalBankMoney);
+        this.controlPanel.add(exit);
+        this.mainFrame.setVisible(true);
+    }
+
     /**
      * Try to login into the system
      */
@@ -72,8 +116,6 @@ public class UserScreen {
             Account accountAux = new Account();
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setPassword(passwordText.getText());
-            System.out.println(accountAux.getAccountNumber());
-            System.out.println(accountAux.getPassword());
             accountAux = server.login(accountAux);
             messageAlertTag = accountAux != null ? MessageAlertTag.LOGIN_SUCCESSFUL : MessageAlertTag.LOGIN_ERROR;
             this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
@@ -82,7 +124,7 @@ public class UserScreen {
                 this.mainFrame.setVisible(false);
                 this.statusLabel.setVisible(false);
                 this.theUser = accountAux;
-                this.transference();
+                this.showMenu();
             }
         });
 
@@ -97,8 +139,8 @@ public class UserScreen {
     /**
      * Transfer an amount of cash between two accounts
      */
-    public void transference() {
-        this.headerLabel.setText("Digite o número da conta e o valor à transferir");
+    private void transference() {
+        this.headerLabel.setText("TRANSFERÊNCIA");
         JLabel toAccountLabel = new JLabel("Para a conta nº: ", JLabel.LEFT);
         JLabel amountLabel = new JLabel("               Valor: ", JLabel.LEFT);
         final JTextField toAccount = new JTextField(20);
@@ -113,55 +155,56 @@ public class UserScreen {
             this.statusLabel.setVisible(true);
         });
 
+        JButton menu = new JButton("Menu");
+        menu.addActionListener(e -> {
+            this.controlPanel.removeAll();
+            this.mainFrame.setVisible(false);
+            this.statusLabel.setVisible(false);
+            this.showMenu();
+        });
+
         this.controlPanel.add(toAccountLabel);
         this.controlPanel.add(toAccount);
         this.controlPanel.add(amountLabel);
         this.controlPanel.add(amount);
         this.controlPanel.add(transferButton);
+        this.controlPanel.add(menu);
         this.mainFrame.setVisible(true);
     }
-
-//    /**
-//     * Try to login into the system
-//     */
-//    public void login() {
-//        int accountNumber;
-//        String password;
-//        Scanner keyboard = new Scanner(System.in);
-//        Account accountAux = new Account();
-//        MessageAlertTag messageAlertTag;
-//        do {
-//            System.out.print("Número da conta: ");
-//            accountNumber = Integer.parseInt(keyboard.nextLine());
-//            System.out.print("Senha: ");
-//            password = keyboard.nextLine();
-//
-//            messageAlertTag = server.login(accountAux);
-//            System.out.println(MessageAlert.toString(messageAlertTag));
-//        } while (messageAlertTag != MessageAlertTag.LOGIN_SUCCESSFUL);
-//
-//        keyboard.close();
-//    }
-
-//    /**
-//     * Transfer an amount of cash between two accounts
-//     */
-//    public void transference() {
-//        int toAccount;
-//        Double amount;
-//        Scanner keyboard = new Scanner(System.in);
-//        System.out.println("Digite o número da conta para transferência: ");
-//        toAccount = keyboard.nextInt();
-//        System.out.println("Digite o valor a ser transferido: ");
-//        amount = keyboard.nextDouble();
-//        this.server.transference(this.theUser, toAccount, amount);
-//    }
 
     /**
      * Get the balance of the user account
      */
-    public void getBalance() {
-        System.out.println(this.server.getBalance(this.theUser));
+    private void getBalance() {
+        this.headerLabel.setText(this.server.getBalance(this.theUser));
+        JButton menu = new JButton("Menu");
+        menu.addActionListener(e -> {
+            this.controlPanel.removeAll();
+            this.mainFrame.setVisible(false);
+            this.statusLabel.setVisible(false);
+            this.showMenu();
+        });
+        this.controlPanel.add(menu);
+        this.mainFrame.setVisible(true);
+    }
+
+    private void totalBankMoney() {
+        this.headerLabel.setText("Todas as contas e a soma total");
+        JTextArea textArea = new JTextArea(5, 30);
+        textArea.setEditable(false);
+        textArea.setText(this.server.toString());
+        JScrollPane scroll = new JScrollPane(textArea);
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        JButton menu = new JButton("Menu");
+        menu.addActionListener(e -> {
+            this.controlPanel.removeAll();
+            this.mainFrame.setVisible(false);
+            this.statusLabel.setVisible(false);
+            this.showMenu();
+        });
+        this.controlPanel.add(scroll);
+        this.controlPanel.add(menu);
+        this.mainFrame.setVisible(true);
     }
 
 }

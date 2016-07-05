@@ -17,7 +17,7 @@ public class ServerBank {
      * Try to login into the system
      *
      * @param a
-     * @return String
+     * @return Account
      */
     public Account login(Account a) {
         Account accountAux = this.BCBank.getAllAccounts().get(a.getAccountNumber());
@@ -59,5 +59,10 @@ public class ServerBank {
      */
     public String getBalance(Account a) {
         return this.BCBank.getBalance(a);
+    }
+
+    @Override
+    public String toString() {
+        return this.BCBank.toString();
     }
 }
