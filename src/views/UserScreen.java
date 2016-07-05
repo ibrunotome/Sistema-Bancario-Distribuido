@@ -5,6 +5,7 @@ import controllers.ServerBank;
 import models.Account;
 import models.MessageAlertTag;
 import org.jgroups.JChannel;
+import org.jgroups.ReceiverAdapter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +20,7 @@ import java.awt.event.WindowEvent;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
-public class UserScreen {
+public class UserScreen extends ReceiverAdapter {
 
     private ServerBank server = new ServerBank();
     private Account theUser = new Account();
@@ -313,4 +314,22 @@ public class UserScreen {
         this.mainFrame.setVisible(true);
     }
 
+
+    /******************************************************************************************
+     * Trying to make the distributed functions
+     *****************************************************************************************/
+
+    private void start() throws Exception {
+        channel = new JChannel();        //usa a configuração default
+
+        //Cria o canal de comunicação com configurações alternativas
+        //channel=new JChannel("./xml-configs/udp.xml");
+        //channel=new JChannel("./xml-configs/encrypt.xml");
+
+        channel.setReceiver(this);    //quem irá lidar com as mensagens recebidas
+
+        channel.connect("ChatGroup");
+        //eventLoop();
+        channel.close();
+    }
 }

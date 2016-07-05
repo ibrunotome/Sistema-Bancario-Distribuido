@@ -10,5 +10,13 @@ public class Main {
         UserScreen screen = new UserScreen();
         screen.prepareGUI();
         screen.login();
+
+        /**
+         *
+         * Anotações pra uso futuro
+         *
+         * // enviar mensagem com objeto serializado
+         * public void send(Address dst, Serializable obj) throws Exception;
+         */
     }
 }
