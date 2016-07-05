@@ -42,7 +42,7 @@ public class ServerBank {
      */
     public MessageAlertTag transference(Account byUser, int toUser, Double amount) {
         Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
-        if (toUserAux != null) {
+        if (toUserAux != null && byUser.getAccountNumber() != toUserAux.getAccountNumber()) {
             if (byUser.getBalance() >= amount && amount > 0) {
                 this.BCBank.transference(byUser, toUserAux, amount);
                 // Add a new transfer to extract of byUser
@@ -62,12 +62,15 @@ public class ServerBank {
                 allAccounts.replace(byUser.getAccountNumber(), byUser);
                 allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
                 this.BCBank.setAllAccounts(allAccounts);
+                this.BCBank.saveState();
                 return MessageAlertTag.TRANSFER_SUCCESSFUL;
             } else if (amount <= 0) {
                 return MessageAlertTag.TRANSFER_ERROR_NEGATIVE;
             } else {
                 return MessageAlertTag.TRANSFER_ERROR_AMOUNT;
             }
+        } else if (toUserAux != null && byUser.getAccountNumber() == toUserAux.getAccountNumber()) {
+            return MessageAlertTag.TRANSFER_ERROR_SAME_ACCOUNT;
         } else {
             return MessageAlertTag.TRANSFER_ERROR_ACCOUNT;
         }
@@ -79,6 +82,7 @@ public class ServerBank {
      * @param newUser
      * @return MessageAlertTag
      */
+
     public MessageAlertTag signUp(Account newUser) {
         if (this.BCBank.getAllAccounts().get(newUser.getAccountNumber()) == null) {
             this.BCBank.addAccount(newUser);

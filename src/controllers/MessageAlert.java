@@ -22,6 +22,8 @@ public class MessageAlert {
                 return "Transferência realizada com sucesso";
             case TRANSFER_ERROR_NEGATIVE:
                 return "ERRO: Valor de transferência deve ser positivo";
+            case TRANSFER_ERROR_SAME_ACCOUNT:
+                return "ERRO: Você não pode transferir para sua própria conta";
             case TRANSFER_ERROR_AMOUNT:
                 return "ERRO: Saldo insuficiente";
             case TRANSFER_ERROR_ACCOUNT:

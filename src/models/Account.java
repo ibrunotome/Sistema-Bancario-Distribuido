@@ -1,5 +1,6 @@
 package models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -9,7 +10,7 @@ import java.util.ArrayList;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
-public class Account {
+public class Account implements Serializable {
 
     private int accountNumber;
     private String name;
@@ -25,7 +26,6 @@ public class Account {
 
         return allTransferences;
     }
-
 
     public String getName() {
         return this.name;
