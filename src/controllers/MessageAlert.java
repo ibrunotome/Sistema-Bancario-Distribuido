@@ -3,6 +3,8 @@ package controllers;
 import models.MessageAlertTag;
 
 /**
+ * Class to make the toString for MessageAlertTags
+ *
  * @author Bruno Tomé
  * @author Cláudio Menezes
  * @since 04/07/2016
@@ -24,6 +26,10 @@ public class MessageAlert {
                 return "ERRO: Saldo insuficiente";
             case TRANSFER_ERROR_ACCOUNT:
                 return "ERRO: Conta inexistente";
+            case SIGNUP_SUCCESSFUL:
+                return "Cadastrado com sucesso";
+            case SIGNUP_ERROR:
+                return "ERRO: Conta já existente";
             default:
                 return "Erro desconhecido :(";
         }

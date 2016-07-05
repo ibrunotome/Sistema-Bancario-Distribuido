@@ -7,6 +7,9 @@ import models.MessageAlertTag;
 import java.util.Hashtable;
 
 /**
+ * Controller that makes the comunications between the UserScreen view
+ * and the Bank model
+ *
  * @author Bruno Tomé
  * @author Cláudio Menezes
  * @since 03/07/2016
@@ -67,6 +70,21 @@ public class ServerBank {
             }
         } else {
             return MessageAlertTag.TRANSFER_ERROR_ACCOUNT;
+        }
+    }
+
+    /**
+     * Create a new account if there isn't an equal account created yet
+     *
+     * @param newUser
+     * @return MessageAlertTag
+     */
+    public MessageAlertTag signUp(Account newUser) {
+        if (this.BCBank.getAllAccounts().get(newUser.getAccountNumber()) == null) {
+            this.BCBank.addAccount(newUser);
+            return MessageAlertTag.SIGNUP_SUCCESSFUL;
+        } else {
+            return MessageAlertTag.SIGNUP_ERROR;
         }
     }
 

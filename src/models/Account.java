@@ -3,6 +3,8 @@ package models;
 import java.util.ArrayList;
 
 /**
+ * Class to implement the model of an user account
+ *
  * @author Bruno Tomé
  * @author Cláudio Menezes
  * @since 03/07/2016
@@ -14,11 +16,6 @@ public class Account {
     private String password;
     private Double balance;
     private ArrayList<String> extract = new ArrayList<>();
-
-
-    public ArrayList<String> getExtract() {
-        return this.extract;
-    }
 
     public String getExtractToString() {
         String allTransferences = "";

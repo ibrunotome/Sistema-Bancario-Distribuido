@@ -1,12 +1,10 @@
 package models;
 
 import java.util.Hashtable;
-import java.util.Map;
-
-import static com.sun.tools.doclint.Entity.sum;
-import static java.lang.System.in;
 
 /**
+ * Class to simulate a bank
+ *
  * @author Bruno Tomé
  * @author Cláudio Menezes
  * @since 03/07/2016
@@ -21,7 +19,7 @@ public class Bank {
     }
 
     /**
-     * Initialize the bank if there isn' an object bank serialized
+     * Initialize the bank if there isn't an object bank serialized
      */
     private void initalizeBank() {
         for (int i = 0; i < this.totalAccounts; i++) {
@@ -30,6 +28,9 @@ public class Bank {
             a.setName("user" + i);
             a.setPassword("pass" + i);
             a.setBalance(this.totalCash / this.totalAccounts);
+            a.addToExtract("\n----------------------------\nDEPÓSITO\n"
+                    + "----------------------------\nValor: R$ " + a.getBalance() + "\nMeu novo saldo: R$ "
+                    + (a.getBalance()) + "\n----------------------------\n");
             this.allAccounts.put(a.getAccountNumber(), a);
         }
     }
@@ -65,13 +66,26 @@ public class Bank {
      * @param a
      */
     public void addAccount(Account a) {
+        a.addToExtract("\n----------------------------\nDEPÓSITO\n"
+                + "----------------------------\nValor: R$ " + a.getBalance() + "\nMeu novo saldo: R$ "
+                + (a.getBalance()) + "\n----------------------------\n");
         this.allAccounts.put(a.getAccountNumber(), a);
     }
 
+    /**
+     * Get all acounts table
+     *
+     * @return Hashtable
+     */
     public Hashtable<Integer, Account> getAllAccounts() {
         return this.allAccounts;
     }
 
+    /**
+     * Set the hashtable allAccounts
+     *
+     * @param allAccounts
+     */
     public void setAllAccounts(Hashtable<Integer, Account> allAccounts) {
         this.allAccounts = allAccounts;
     }
