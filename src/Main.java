@@ -10,6 +10,5 @@ public class Main {
         UserScreen screen = new UserScreen();
         screen.prepareGUI();
         screen.login();
-        //screen.login();
     }
 }

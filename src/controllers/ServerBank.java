@@ -4,6 +4,8 @@ import models.Account;
 import models.Bank;
 import models.MessageAlertTag;
 
+import java.util.Hashtable;
+
 /**
  * @author Bruno Tomé
  * @author Cláudio Menezes
@@ -40,6 +42,23 @@ public class ServerBank {
         if (toUserAux != null) {
             if (byUser.getBalance() >= amount && amount > 0) {
                 this.BCBank.transference(byUser, toUserAux, amount);
+                // Add a new transfer to extract of byUser
+                byUser.addToExtract("\n----------------------------\nSAÍDA\n"
+                        + "----------------------------\nPara a conta nº "
+                        + toUser + "\nValor: R$ " + amount + "\nMeu novo saldo: R$ "
+                        + (byUser.getBalance()) + "\n----------------------------\n");
+                // Add a new transfer to extract of toUser
+                toUserAux.addToExtract("\n----------------------------\nENTRADA\n"
+                        + "----------------------------\nProvindo da conta nº "
+                        + byUser.getAccountNumber() + "\nValor: R$ " + amount + "\nMeu novo saldo: R$ "
+                        + (toUserAux.getBalance()) + "\n----------------------------\n");
+
+                // Update the allAccounts of BCBank
+                Hashtable<Integer, Account> allAccounts;
+                allAccounts = this.BCBank.getAllAccounts();
+                allAccounts.replace(byUser.getAccountNumber(), byUser);
+                allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
+                this.BCBank.setAllAccounts(allAccounts);
                 return MessageAlertTag.TRANSFER_SUCCESSFUL;
             } else if (amount <= 0) {
                 return MessageAlertTag.TRANSFER_ERROR_NEGATIVE;

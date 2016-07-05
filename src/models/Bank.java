@@ -72,6 +72,10 @@ public class Bank {
         return this.allAccounts;
     }
 
+    public void setAllAccounts(Hashtable<Integer, Account> allAccounts) {
+        this.allAccounts = allAccounts;
+    }
+
     @Override
     public String toString() {
         Double total = 0.0;

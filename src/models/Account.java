@@ -1,5 +1,7 @@
 package models;
 
+import java.util.ArrayList;
+
 /**
  * @author Bruno Tomé
  * @author Cláudio Menezes
@@ -11,6 +13,22 @@ public class Account {
     private String name;
     private String password;
     private Double balance;
+    private ArrayList<String> extract = new ArrayList<>();
+
+
+    public ArrayList<String> getExtract() {
+        return this.extract;
+    }
+
+    public String getExtractToString() {
+        String allTransferences = "";
+        for (String s : this.extract) {
+            allTransferences += s;
+        }
+
+        return allTransferences;
+    }
+
 
     public String getName() {
         return this.name;
@@ -42,6 +60,10 @@ public class Account {
 
     public void setAccountNumber(int accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public void addToExtract(String s) {
+        this.extract.add(s);
     }
 
     @Override
