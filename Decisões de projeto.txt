@@ -1,1 +1,4 @@
 #1 A partir deste período, todos os nossos códigos se são feitos em inglês pois ficam como portfolio em nossos githubs e achamos que isso seria interessante
+
+// Instanciar a classe sozinha em outra máquina já é o "separar em máquinas"
+// FC

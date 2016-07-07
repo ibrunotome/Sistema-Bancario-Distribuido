@@ -18,6 +18,9 @@ public class ServerBank {
 
     private Bank BCBank = new Bank();
 
+    public ServerBank() throws Exception {
+    }
+
     /**
      * Try to login into the system
      *

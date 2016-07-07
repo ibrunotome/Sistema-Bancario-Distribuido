@@ -1,5 +1,7 @@
 package models;
 
+import org.jgroups.JChannel;
+
 import java.io.*;
 import java.util.Hashtable;
 
@@ -14,8 +16,10 @@ public class Bank implements Serializable {
     private final Double totalCash = 10000.0;
     private final int totalAccounts = 10;
     private Hashtable<Integer, Account> allAccounts = new Hashtable();
+    private JChannel channel;
 
-    public Bank() {
+    public Bank() throws Exception {
+        //this.channel = new JChannel("Teste");
         initalizeBank();
     }
 
@@ -23,6 +27,12 @@ public class Bank implements Serializable {
      * Initialize the bank if there isn't an object bank serialized
      */
     private void initalizeBank() {
+
+        //this.channel.getView().size();
+        //lock
+            //cria contas
+        //unlock
+
         File f = new File("allAccounts.ser");
         if (f.exists() && !f.isDirectory()) {
             System.out.println("Banco existe, carregando snapshot");

@@ -32,8 +32,8 @@ public class UserScreen extends ReceiverAdapter {
     private JLabel statusLabel;
     private JPanel controlPanel;
 
-    public UserScreen() {
-
+    public UserScreen() throws Exception {
+        //this.channel = new JChannel("Teste");
     }
 
     /**
@@ -53,6 +53,8 @@ public class UserScreen extends ReceiverAdapter {
         this.statusLabel = new JLabel("", JLabel.CENTER);
         this.controlPanel = new JPanel();
         this.controlPanel.setLayout(new FlowLayout());
+        this.statusLabel.setSize(350, 100);
+        this.statusLabel.setVisible(true);
         this.mainFrame.add(this.headerLabel);
         this.mainFrame.add(this.controlPanel);
         this.mainFrame.add(this.statusLabel);
