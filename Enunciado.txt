@@ -14,13 +14,13 @@ Trabalho de SD: Sistema Bancário Distribuído (DBS)
 - DICA: "contabilidade de dupla entrada" -> todo dinheiro que sair tem que entrar em algum lugar, seja numa outra conta do mesmo banco (1ª fase) ou em outra conta de outro banco (2ª fase).
 
 ## Requisitos:
-- para troca de mensagens, deverá ser utilizado multicast confiável (e/ou unicast, de acordo com o caso);
+√ - para troca de mensagens, deverá ser utilizado multicast confiável (e/ou unicast, de acordo com o caso);
 √ - deverá ser utilizado e configurado protocolo de transporte que não seja o TCP
-- OBS.: deverão ser configurados mecanismos para garantir a confiabilidade na entrega das mensagens (retransmissão de mensagens, detecção de duplicatas e integridade);
-- deverá ser escolhido e configurado mecanismo de ordenação de mensagens e sincronização;
+√ - OBS.: deverão ser configurados mecanismos para garantir a confiabilidade na entrega das mensagens (retransmissão de mensagens, detecção de duplicatas e integridade);
+√ - deverá ser escolhido e configurado mecanismo de ordenação de mensagens e sincronização;
 √ - deverá ser escolhido e configurado mecanismo de controle de fluxo ou limitação de taxa de envio;
-- deverá haver um mecanismo de gerenciamento de grupo (GMS);
-- deverá ser escolhido e configurado mecanismo de detecção de falhas;
+√ - deverá haver um mecanismo de gerenciamento de grupo (GMS);
+√ - deverá ser escolhido e configurado mecanismo de detecção de falhas;
 √ - deverá ser escolhido e configurado mecanismo de criptografia;
 
 OBS.: Deverá ser explorada a pilha de protocolos flexível do JGroups, para adaptá-lo às necessidades do DBS. Poderá ser utilizado diretamente RPC onde julgar necessário (ex.: RPCDispatcher provido pelo JGroups ou Java RMI).
@@ -28,10 +28,10 @@ OBS.: Deverá ser explorada a pilha de protocolos flexível do JGroups, para ada
 
 ## Operações (API):
 O DBS deverá permitir que os clientes façam as seguintes operações:
-- abertura de conta, identificada por um número e acessada por uma senha;
-- consulta do saldo da conta;
-- consulta de extrato das movimentações financeiras;
-- transferência de dinheiro entre contas do mesmo banco;
+√ - abertura de conta, identificada por um número e acessada por uma senha;
+√ - consulta do saldo da conta;
+√ - consulta de extrato das movimentações financeiras;
+√ - transferência de dinheiro entre contas do mesmo banco;
 
 ## Documentação:
 O relatório deverá conter diagramas apropriados ilustrando a arquitetura projetada e justificar as escolhas efetuadas.
