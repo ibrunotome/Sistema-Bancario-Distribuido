@@ -3,6 +3,8 @@ package controllers;
 import models.Account;
 import models.Bank;
 import models.MessageAlertTag;
+import org.jgroups.JChannel;
+import org.jgroups.ReceiverAdapter;
 
 import java.util.Hashtable;
 
@@ -14,11 +16,13 @@ import java.util.Hashtable;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
-public class ServerBank {
+public class ServerBank extends ReceiverAdapter {
 
     private Bank BCBank = new Bank();
+    private JChannel channel;
 
     public ServerBank() throws Exception {
+        this.start();
     }
 
     /**
@@ -107,6 +111,18 @@ public class ServerBank {
 
     @Override
     public String toString() {
-        return this.BCBank.toString();
+        return this.BCBank.sumBankCash();
+    }
+
+    /******************************************************************************************
+     * Trying to make the distributed functions
+     *****************************************************************************************/
+
+    private void start() throws Exception {
+        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
+        this.channel.setReceiver(this); //quem irá lidar com as mensagens recebidas
+        this.channel.connect("BCBankGroup");
+        //eventLoop();
+        this.channel.close();
     }
 }

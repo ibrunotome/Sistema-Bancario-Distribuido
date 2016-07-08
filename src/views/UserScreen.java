@@ -33,7 +33,7 @@ public class UserScreen extends ReceiverAdapter {
     private JPanel controlPanel;
 
     public UserScreen() throws Exception {
-        //this.channel = new JChannel("Teste");
+        this.start();
     }
 
     /**
@@ -92,14 +92,6 @@ public class UserScreen extends ReceiverAdapter {
             this.extract();
         });
 
-        JButton totalBankMoney = new JButton("Soma");
-        totalBankMoney.addActionListener(e -> {
-            this.controlPanel.removeAll();
-            this.mainFrame.setVisible(false);
-            this.statusLabel.setVisible(false);
-            this.totalBankMoney();
-        });
-
         JButton exit = new JButton("Sair");
         exit.addActionListener(e -> {
             this.controlPanel.removeAll();
@@ -108,10 +100,11 @@ public class UserScreen extends ReceiverAdapter {
             this.login();
         });
 
+        this.statusLabel.setText(this.server.toString());
+        this.statusLabel.setVisible(true);
         this.controlPanel.add(transferButton);
         this.controlPanel.add(showBalanceButton);
         this.controlPanel.add(extract);
-        this.controlPanel.add(totalBankMoney);
         this.controlPanel.add(exit);
         this.mainFrame.setVisible(true);
     }
@@ -138,7 +131,8 @@ public class UserScreen extends ReceiverAdapter {
             if (messageAlertTag == MessageAlertTag.LOGIN_SUCCESSFUL) {
                 this.controlPanel.removeAll();
                 this.mainFrame.setVisible(false);
-                this.statusLabel.setVisible(false);
+                this.statusLabel.setText(this.server.toString());
+                this.statusLabel.setVisible(true);
                 this.theUser = accountAux;
                 this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
                 this.showMenu();
@@ -293,45 +287,15 @@ public class UserScreen extends ReceiverAdapter {
         this.mainFrame.setVisible(true);
     }
 
-    /**
-     * Get and sum the balance of all acounts and print into
-     * a textarea element, this is for see if no one of the transactions failed
-     */
-    private void totalBankMoney() {
-        this.headerLabel.setText("Todas as contas e a soma total");
-        JTextArea textArea = new JTextArea(7, 30);
-        textArea.setEditable(false);
-        textArea.setText(this.server.toString());
-        JScrollPane scroll = new JScrollPane(textArea);
-        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        JButton menu = new JButton("Menu");
-        menu.addActionListener(e -> {
-            this.controlPanel.removeAll();
-            this.mainFrame.setVisible(false);
-            this.statusLabel.setVisible(false);
-            this.showMenu();
-        });
-        this.controlPanel.add(scroll);
-        this.controlPanel.add(menu);
-        this.mainFrame.setVisible(true);
-    }
-
-
     /******************************************************************************************
      * Trying to make the distributed functions
      *****************************************************************************************/
 
     private void start() throws Exception {
-        channel = new JChannel();        //usa a configuração default
-
-        //Cria o canal de comunicação com configurações alternativas
-        //channel=new JChannel("./xml-configs/udp.xml");
-        //channel=new JChannel("./xml-configs/encrypt.xml");
-
-        channel.setReceiver(this);    //quem irá lidar com as mensagens recebidas
-
-        channel.connect("ChatGroup");
+        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
+        this.channel.setReceiver(this);    //quem irá lidar com as mensagens recebidas
+        this.channel.connect("BCBankGroup");
         //eventLoop();
-        channel.close();
+        this.channel.close();
     }
 }

@@ -15,13 +15,13 @@ Trabalho de SD: Sistema Bancário Distribuído (DBS)
 
 ## Requisitos:
 - para troca de mensagens, deverá ser utilizado multicast confiável (e/ou unicast, de acordo com o caso);
-- deverá ser utilizado e configurado protocolo de transporte que não seja o TCP
+√ - deverá ser utilizado e configurado protocolo de transporte que não seja o TCP
 - OBS.: deverão ser configurados mecanismos para garantir a confiabilidade na entrega das mensagens (retransmissão de mensagens, detecção de duplicatas e integridade);
 - deverá ser escolhido e configurado mecanismo de ordenação de mensagens e sincronização;
-- deverá ser escolhido e configurado mecanismo de controle de fluxo ou limitação de taxa de envio;
+√ - deverá ser escolhido e configurado mecanismo de controle de fluxo ou limitação de taxa de envio;
 - deverá haver um mecanismo de gerenciamento de grupo (GMS);
 - deverá ser escolhido e configurado mecanismo de detecção de falhas;
-- deverá ser escolhido e configurado mecanismo de criptografia;
+√ - deverá ser escolhido e configurado mecanismo de criptografia;
 
 OBS.: Deverá ser explorada a pilha de protocolos flexível do JGroups, para adaptá-lo às necessidades do DBS. Poderá ser utilizado diretamente RPC onde julgar necessário (ex.: RPCDispatcher provido pelo JGroups ou Java RMI).
 

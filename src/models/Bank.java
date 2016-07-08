@@ -1,6 +1,7 @@
 package models;
 
 import org.jgroups.JChannel;
+import org.jgroups.ReceiverAdapter;
 
 import java.io.*;
 import java.util.Hashtable;
@@ -12,14 +13,14 @@ import java.util.Hashtable;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
-public class Bank implements Serializable {
+public class Bank extends ReceiverAdapter implements Serializable {
     private final Double totalCash = 10000.0;
     private final int totalAccounts = 10;
     private Hashtable<Integer, Account> allAccounts = new Hashtable();
     private JChannel channel;
 
     public Bank() throws Exception {
-        //this.channel = new JChannel("Teste");
+        this.start();
         initalizeBank();
     }
 
@@ -27,12 +28,6 @@ public class Bank implements Serializable {
      * Initialize the bank if there isn't an object bank serialized
      */
     private void initalizeBank() {
-
-        //this.channel.getView().size();
-        //lock
-            //cria contas
-        //unlock
-
         File f = new File("allAccounts.ser");
         if (f.exists() && !f.isDirectory()) {
             System.out.println("Banco existe, carregando snapshot");
@@ -142,12 +137,23 @@ public class Bank implements Serializable {
         this.allAccounts = allAccounts;
     }
 
-    @Override
-    public String toString() {
+    public String sumBankCash() {
         Double total = 0.0;
         for (Account a : this.allAccounts.values()) {
             total += a.getBalance();
         }
-        return this.allAccounts.toString() + "\n\nTotal: R$ " + total;
+        return "Soma total: " + total;
+    }
+
+    /******************************************************************************************
+     * Trying to make the distributed functions
+     *****************************************************************************************/
+
+    private void start() throws Exception {
+        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
+        this.channel.setReceiver(this); //quem irá lidar com as mensagens recebidas
+        this.channel.connect("BCBankGroup");
+        //eventLoop();
+        this.channel.close();
     }
 }
