@@ -4,6 +4,7 @@ import models.Account;
 import models.Bank;
 import models.MessageAlertTag;
 import org.jgroups.JChannel;
+import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 
 import java.util.Hashtable;
@@ -117,6 +118,29 @@ public class ServerBank extends ReceiverAdapter {
     /******************************************************************************************
      * Trying to make the distributed functions
      *****************************************************************************************/
+
+    public void receive(Message message) {
+        Account account = (Account) message.getObject();
+        switch (account.getTag()) {
+            case TRANSFER:
+                break;
+            case LOGIN:
+                account = this.login(account);
+                message.setObject(account);
+                try {
+                    this.channel.send(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case BALANCE:
+                break;
+            case EXTRACT:
+                break;
+            default:
+                break;
+        }
+    }
 
     private void start() throws Exception {
         this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default

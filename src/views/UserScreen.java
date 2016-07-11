@@ -4,7 +4,9 @@ import controllers.MessageAlert;
 import controllers.ServerBank;
 import models.Account;
 import models.MessageAlertTag;
+import models.ProtocolTag;
 import org.jgroups.JChannel;
+import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 
 import javax.swing.*;
@@ -125,6 +127,13 @@ public class UserScreen extends ReceiverAdapter {
             Account accountAux = new Account();
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setPassword(passwordText.getText());
+            accountAux.setTag(ProtocolTag.LOGIN);
+            Message message = new Message(null, accountAux);
+            try {
+                this.channel.send(message);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
             accountAux = server.login(accountAux);
 
             // Via rpc, nome, tipo, depois valores e send message

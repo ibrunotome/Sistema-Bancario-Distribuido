@@ -18,6 +18,8 @@ public class Account implements Serializable {
     private Double balance;
     private ArrayList<String> extract = new ArrayList<>();
 
+    private ProtocolTag tag;
+
     public String getExtractToString() {
         String allTransferences = "";
         for (String s : this.extract) {
@@ -25,6 +27,14 @@ public class Account implements Serializable {
         }
 
         return allTransferences;
+    }
+
+    public ProtocolTag getTag() {
+        return this.tag;
+    }
+
+    public void setTag(ProtocolTag tag) {
+        this.tag = tag;
     }
 
     public String getName() {
