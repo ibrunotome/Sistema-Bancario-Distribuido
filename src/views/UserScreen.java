@@ -3,6 +3,7 @@ package views;
 import controllers.MessageAlert;
 import controllers.ServerBank;
 import models.Account;
+import models.Data;
 import models.MessageAlertTag;
 import models.ProtocolTag;
 import org.jgroups.JChannel;
@@ -123,12 +124,13 @@ public class UserScreen extends ReceiverAdapter {
 
         JButton loginButton = new JButton("Login");
         loginButton.addActionListener(e -> {
-            MessageAlertTag messageAlertTag;
             Account accountAux = new Account();
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setPassword(passwordText.getText());
-            accountAux.setProtocolTag(ProtocolTag.LOGIN);
-            Message message = new Message(null, accountAux);
+            Data data = new Data();
+            data.setProtocolTag(ProtocolTag.LOGIN);
+            data.setAccountAux(accountAux);
+            Message message = new Message(null, data);
             try {
                 this.channel.send(message);
             } catch (Exception e1) {
@@ -223,9 +225,15 @@ public class UserScreen extends ReceiverAdapter {
         transferButton.addActionListener(e -> {
             MessageAlertTag messageAlertTag;
             // Call to server to make the transference
-            messageAlertTag = this.server.transference(this.theUser, Integer.parseInt(toAccount.getText()),
-                    Double.parseDouble(amount.getText()));
-            this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
+            Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
+            Message message = new Message(null, data);
+            try {
+                this.channel.send(message);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+
+            // this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
             this.statusLabel.setVisible(true);
         });
 
@@ -293,22 +301,22 @@ public class UserScreen extends ReceiverAdapter {
         this.channel.setReceiver(this);    //quem irá lidar com as mensagens recebidas
         this.channel.connect("BCBankGroup");
         //eventLoop();
-        this.channel.close();
+        // this.channel.close();
     }
 
     public void receive(Message message) {
-        Account accountAux = (Account) message.getObject();
-        switch (accountAux.getProtocolTag()) {
+        Data data = (Data) message.getObject();
+        switch (data.getProtocolTag()) {
             case TRANSFER:
                 break;
             case LOGIN:
-                this.statusLabel.setText(MessageAlert.toString(accountAux.getAlertTag()));
-                if (accountAux.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
+                this.statusLabel.setText(MessageAlert.toString(data.getAlertTag()));
+                if (data.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
                     this.controlPanel.removeAll();
                     this.mainFrame.setVisible(false);
                     this.statusLabel.setText(this.server.toString());
                     this.statusLabel.setVisible(true);
-                    this.theUser = accountAux;
+                    this.theUser = data.getAccountAux();
                     this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
                     this.showMenu();
                 }

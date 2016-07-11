@@ -1,9 +1,6 @@
 package controllers;
 
-import models.Account;
-import models.Bank;
-import models.MessageAlertTag;
-import models.ProtocolTag;
+import models.*;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
@@ -123,14 +120,14 @@ public class ServerBank extends ReceiverAdapter {
      *****************************************************************************************/
 
     public void receive(Message message) {
-        Account account = (Account) message.getObject();
-        switch (account.getProtocolTag()) {
+        Data data = (Data) message.getObject();
+        switch (data.getProtocolTag()) {
             case TRANSFER:
                 break;
             case LOGIN:
-                account = this.login(account);
-                account.setProtocolTag(ProtocolTag.LOGIN);
-                message.setObject(account);
+                data.setAccountAux(this.login(data.getAccountAux()));
+                data.setProtocolTag(ProtocolTag.LOGIN);
+                message.setObject(data);
                 try {
                     this.channel.send(message);
                 } catch (Exception e) {
