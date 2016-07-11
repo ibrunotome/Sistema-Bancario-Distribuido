@@ -126,6 +126,10 @@ public class UserScreen extends ReceiverAdapter {
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setPassword(passwordText.getText());
             accountAux = server.login(accountAux);
+
+            // Via rpc, nome, tipo, depois valores e send message
+            // Via channel, enviando uma Message com um Comando<MsgTag, Account>
+
             messageAlertTag = accountAux != null ? MessageAlertTag.LOGIN_SUCCESSFUL : MessageAlertTag.LOGIN_ERROR;
             this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
             if (messageAlertTag == MessageAlertTag.LOGIN_SUCCESSFUL) {
@@ -297,5 +301,21 @@ public class UserScreen extends ReceiverAdapter {
         this.channel.connect("BCBankGroup");
         //eventLoop();
         this.channel.close();
+    }
+
+
+    public static void main(String args[]) throws Exception {
+        UserScreen screen = new UserScreen();
+        screen.prepareGUI();
+        screen.login();
+
+        /**
+         *
+         * Anotações pra uso futuro
+         *
+         * // enviar mensagem com objeto serializado
+         * // http://www.jgroups.org/manual/html/user-channel.html
+         * public void send(Address dst, Serializable obj) throws Exception;
+         */
     }
 }
