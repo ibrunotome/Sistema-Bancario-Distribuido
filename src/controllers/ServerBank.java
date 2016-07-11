@@ -3,6 +3,7 @@ package controllers;
 import models.Account;
 import models.Bank;
 import models.MessageAlertTag;
+import models.ProtocolTag;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
@@ -35,9 +36,11 @@ public class ServerBank extends ReceiverAdapter {
     public Account login(Account a) {
         Account accountAux = this.BCBank.getAllAccounts().get(a.getAccountNumber());
         if (accountAux != null && accountAux.getPassword().equals(a.getPassword())) {
+            accountAux.setAlertTag(MessageAlertTag.LOGIN_SUCCESSFUL);
             return accountAux;
         } else {
-            return null;
+            accountAux.setAlertTag(MessageAlertTag.LOGIN_ERROR);
+            return accountAux;
         }
     }
 
@@ -121,11 +124,12 @@ public class ServerBank extends ReceiverAdapter {
 
     public void receive(Message message) {
         Account account = (Account) message.getObject();
-        switch (account.getTag()) {
+        switch (account.getProtocolTag()) {
             case TRANSFER:
                 break;
             case LOGIN:
                 account = this.login(account);
+                account.setProtocolTag(ProtocolTag.LOGIN);
                 message.setObject(account);
                 try {
                     this.channel.send(message);

@@ -127,28 +127,12 @@ public class UserScreen extends ReceiverAdapter {
             Account accountAux = new Account();
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setPassword(passwordText.getText());
-            accountAux.setTag(ProtocolTag.LOGIN);
+            accountAux.setProtocolTag(ProtocolTag.LOGIN);
             Message message = new Message(null, accountAux);
             try {
                 this.channel.send(message);
             } catch (Exception e1) {
                 e1.printStackTrace();
-            }
-            accountAux = server.login(accountAux);
-
-            // Via rpc, nome, tipo, depois valores e send message
-            // Via channel, enviando uma Message com um Comando<MsgTag, Account>
-
-            messageAlertTag = accountAux != null ? MessageAlertTag.LOGIN_SUCCESSFUL : MessageAlertTag.LOGIN_ERROR;
-            this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
-            if (messageAlertTag == MessageAlertTag.LOGIN_SUCCESSFUL) {
-                this.controlPanel.removeAll();
-                this.mainFrame.setVisible(false);
-                this.statusLabel.setText(this.server.toString());
-                this.statusLabel.setVisible(true);
-                this.theUser = accountAux;
-                this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
-                this.showMenu();
             }
         });
 
@@ -312,6 +296,31 @@ public class UserScreen extends ReceiverAdapter {
         this.channel.close();
     }
 
+    public void receive(Message message) {
+        Account accountAux = (Account) message.getObject();
+        switch (accountAux.getProtocolTag()) {
+            case TRANSFER:
+                break;
+            case LOGIN:
+                this.statusLabel.setText(MessageAlert.toString(accountAux.getAlertTag()));
+                if (accountAux.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
+                    this.controlPanel.removeAll();
+                    this.mainFrame.setVisible(false);
+                    this.statusLabel.setText(this.server.toString());
+                    this.statusLabel.setVisible(true);
+                    this.theUser = accountAux;
+                    this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
+                    this.showMenu();
+                }
+                break;
+            case BALANCE:
+                break;
+            case EXTRACT:
+                break;
+            default:
+                break;
+        }
+    }
 
     public static void main(String args[]) throws Exception {
         UserScreen screen = new UserScreen();

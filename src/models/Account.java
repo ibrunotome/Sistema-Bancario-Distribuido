@@ -17,8 +17,8 @@ public class Account implements Serializable {
     private String password;
     private Double balance;
     private ArrayList<String> extract = new ArrayList<>();
-
-    private ProtocolTag tag;
+    private ProtocolTag protocolTag;
+    private MessageAlertTag alertTag;
 
     public String getExtractToString() {
         String allTransferences = "";
@@ -29,12 +29,20 @@ public class Account implements Serializable {
         return allTransferences;
     }
 
-    public ProtocolTag getTag() {
-        return this.tag;
+    public MessageAlertTag getAlertTag() {
+        return alertTag;
     }
 
-    public void setTag(ProtocolTag tag) {
-        this.tag = tag;
+    public void setAlertTag(MessageAlertTag alertTag) {
+        this.alertTag = alertTag;
+    }
+
+    public ProtocolTag getProtocolTag() {
+        return this.protocolTag;
+    }
+
+    public void setProtocolTag(ProtocolTag protocolTag) {
+        this.protocolTag = protocolTag;
     }
 
     public String getName() {
