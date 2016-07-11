@@ -153,4 +153,8 @@ public class ServerBank extends ReceiverAdapter {
         //eventLoop();
         this.channel.close();
     }
+
+    public static void main(String args[]) throws Exception {
+        ServerBank server = new ServerBank();
+    }
 }

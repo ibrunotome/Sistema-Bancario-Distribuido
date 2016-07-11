@@ -326,14 +326,5 @@ public class UserScreen extends ReceiverAdapter {
         UserScreen screen = new UserScreen();
         screen.prepareGUI();
         screen.login();
-
-        /**
-         *
-         * Anotações pra uso futuro
-         *
-         * // enviar mensagem com objeto serializado
-         * // http://www.jgroups.org/manual/html/user-channel.html
-         * public void send(Address dst, Serializable obj) throws Exception;
-         */
     }
 }
