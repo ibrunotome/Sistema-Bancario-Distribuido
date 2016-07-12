@@ -223,8 +223,8 @@ public class UserScreen extends ReceiverAdapter {
 
         JButton transferButton = new JButton("Transferir");
         transferButton.addActionListener(e -> {
-            MessageAlertTag messageAlertTag;
-            // Call to server to make the transference
+
+            // send a message to server to make the transference
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             Message message = new Message(null, data);
             try {
@@ -233,8 +233,7 @@ public class UserScreen extends ReceiverAdapter {
                 e1.printStackTrace();
             }
 
-            // this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
-            this.statusLabel.setVisible(true);
+
         });
 
         JButton menu = new JButton("Menu");
@@ -258,6 +257,7 @@ public class UserScreen extends ReceiverAdapter {
      * Get the balance of the user account
      */
     private void getBalance() {
+
         this.headerLabel.setText(this.server.getBalance(this.theUser));
         JButton menu = new JButton("Menu");
         menu.addActionListener(e -> {
@@ -297,26 +297,28 @@ public class UserScreen extends ReceiverAdapter {
      *****************************************************************************************/
 
     private void start() throws Exception {
-        this.channel = new JChannel("xml-configs/udp.xml"); // Usa a configuração default
-        this.channel.setReceiver(this);                     // Quem irá lidar com as mensagens recebidas
+        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
+        this.channel.setReceiver(this);    //quem irá lidar com as mensagens recebidas
         this.channel.connect("BCBankGroup");
-        // eventLoop();
-        // this.channel.close();
+        this.channel.close();
     }
 
     public void receive(Message message) {
         Data data = (Data) message.getObject();
+        Account accountReceive = data.getAccountAux();
         switch (data.getProtocolTag()) {
             case TRANSFER:
+                this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
+                this.statusLabel.setVisible(true);
                 break;
             case LOGIN:
-                this.statusLabel.setText(MessageAlert.toString(data.getAccountAux().getAlertTag()));
-                if (data.getAccountAux().getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
+                this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
+                if (accountReceive.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
                     this.controlPanel.removeAll();
                     this.mainFrame.setVisible(false);
                     this.statusLabel.setText(this.server.toString());
                     this.statusLabel.setVisible(true);
-                    this.theUser = data.getAccountAux();
+                    this.theUser = accountReceive;
                     this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
                     this.showMenu();
                 }
