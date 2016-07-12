@@ -12,6 +12,9 @@ public class Data {
     private int accountNumberTotTransfer;
     private Double amount;
     private ProtocolTag protocolTag;
+    private String text;
+
+
 
     public Data() {
 
@@ -53,5 +56,13 @@ public class Data {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
