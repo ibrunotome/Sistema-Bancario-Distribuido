@@ -121,11 +121,21 @@ public class ServerBank extends ReceiverAdapter {
 
     public void receive(Message message) {
         Data data = (Data) message.getObject();
+        Account accountReceived = data.getAccountAux();
         switch (data.getProtocolTag()) {
             case TRANSFER:
+                MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberTotTransfer(), data.getAmount());
+                accountReceived.setAlertTag(transferenceTag);
+                data.setAccountAux(accountReceived);
+                message.setObject(data);
+                try {
+                    this.channel.send(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case LOGIN:
-                data.setAccountAux(this.login(data.getAccountAux()));
+                data.setAccountAux(this.login(accountReceived));
                 data.setProtocolTag(ProtocolTag.LOGIN);
                 message.setObject(data);
                 try {
