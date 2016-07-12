@@ -145,6 +145,14 @@ public class ServerBank extends ReceiverAdapter {
                 }
                 break;
             case BALANCE:
+                String balance = this.getBalance(accountReceived);
+                data.setText(balance);
+                message.setObject(data);
+                try {
+                    this.channel.send(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case EXTRACT:
                 break;
