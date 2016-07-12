@@ -288,22 +288,8 @@ public class UserScreen extends ReceiverAdapter {
             e1.printStackTrace();
         }
 
-        this.headerLabel.setText("Meu extrato");
-        JTextArea textArea = new JTextArea(7, 30);
-        textArea.setEditable(false);
-        textArea.setText(this.theUser.getExtractToString());
-        JScrollPane scroll = new JScrollPane(textArea);
-        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        JButton menu = new JButton("Menu");
-        menu.addActionListener(e -> {
-            this.controlPanel.removeAll();
-            this.mainFrame.setVisible(false);
-            this.statusLabel.setVisible(false);
-            this.showMenu();
-        });
-        this.controlPanel.add(scroll);
-        this.controlPanel.add(menu);
-        this.mainFrame.setVisible(true);
+
+
     }
 
     /******************************************************************************************
@@ -338,7 +324,8 @@ public class UserScreen extends ReceiverAdapter {
                 }
                 break;
             case BALANCE:
-                this.headerLabel.setText(this.server.getBalance(this.theUser));
+
+                this.headerLabel.setText(data.getText());
                 JButton menu = new JButton("Menu");
                 menu.addActionListener(e -> {
                     this.controlPanel.removeAll();
@@ -349,7 +336,29 @@ public class UserScreen extends ReceiverAdapter {
                 this.controlPanel.add(menu);
                 this.mainFrame.setVisible(true);
                 break;
+
+
             case EXTRACT:
+
+                this.headerLabel.setText("Meu extrato");
+                JTextArea textArea = new JTextArea(7, 30);
+                textArea.setEditable(false);
+
+                textArea.setText(data.getText());
+
+                JScrollPane scroll = new JScrollPane(textArea);
+                scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+                JButton menu = new JButton("Menu");
+                menu.addActionListener(e -> {
+                    this.controlPanel.removeAll();
+                    this.mainFrame.setVisible(false);
+                    this.statusLabel.setVisible(false);
+                    this.showMenu();
+                });
+                this.controlPanel.add(scroll);
+                this.controlPanel.add(menu);
+                this.mainFrame.setVisible(true);
+
                 break;
             default:
                 break;
