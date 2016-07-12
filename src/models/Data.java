@@ -12,7 +12,6 @@ public class Data {
     private int accountNumberTotTransfer;
     private Double amount;
     private ProtocolTag protocolTag;
-    private MessageAlertTag alertTag;
 
     public Data() {
 
@@ -22,14 +21,6 @@ public class Data {
         this.accountAux = accountAux;
         this.accountNumberTotTransfer = accountNumberTotTransfer;
         this.amount = amount;
-    }
-
-    public MessageAlertTag getAlertTag() {
-        return alertTag;
-    }
-
-    public void setAlertTag(MessageAlertTag alertTag) {
-        this.alertTag = alertTag;
     }
 
     public ProtocolTag getProtocolTag() {
