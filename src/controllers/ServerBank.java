@@ -174,6 +174,26 @@ public class ServerBank extends ReceiverAdapter {
                     e.printStackTrace();
                 }
                 break;
+            case SINGUP:
+                MessageAlertTag signupTag = this.signUp(accountReceived);
+                accountReceived.setAlertTag(signupTag);
+                data.setAccountAux(accountReceived);
+                message.setObject(data);
+                try {
+                    this.channel.send(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case TO_STRING_SERVER:
+                data.setText(this.toString());
+                message.setObject(data);
+                try {
+                    this.channel.send(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 break;
         }
