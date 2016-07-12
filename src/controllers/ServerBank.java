@@ -110,6 +110,16 @@ public class ServerBank extends ReceiverAdapter {
         return this.BCBank.getBalance(a);
     }
 
+    /**
+     * Get the extract of an account
+     *
+     * @param a
+     * @return String
+     */
+    public String getExtract(Account a) {
+        return a.toString();
+    }
+
     @Override
     public String toString() {
         return this.BCBank.sumBankCash();
@@ -155,6 +165,14 @@ public class ServerBank extends ReceiverAdapter {
                 }
                 break;
             case EXTRACT:
+                String extract = this.getExtract(accountReceived);
+                data.setText(extract);
+                message.setObject(data);
+                try {
+                    this.channel.send(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 break;
