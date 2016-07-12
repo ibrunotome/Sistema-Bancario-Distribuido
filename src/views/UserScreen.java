@@ -226,6 +226,7 @@ public class UserScreen extends ReceiverAdapter {
 
             // send a message to server to make the transference
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
+            data.setProtocolTag(ProtocolTag.TRANSFER);
             Message message = new Message(null, data);
             try {
                 this.channel.send(message);
@@ -258,22 +259,35 @@ public class UserScreen extends ReceiverAdapter {
      */
     private void getBalance() {
 
-        this.headerLabel.setText(this.server.getBalance(this.theUser));
-        JButton menu = new JButton("Menu");
-        menu.addActionListener(e -> {
-            this.controlPanel.removeAll();
-            this.mainFrame.setVisible(false);
-            this.statusLabel.setVisible(false);
-            this.showMenu();
-        });
-        this.controlPanel.add(menu);
-        this.mainFrame.setVisible(true);
+
+        // send a message to server to make the transference
+        Data data = new Data(this.theUser, 0, null);
+        data.setProtocolTag(ProtocolTag.BALANCE);
+        Message message = new Message(null, data);
+        try {
+            this.channel.send(message);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+
     }
 
     /**
      * Print the extractinto textarea element
      */
     private void extract() {
+
+
+        Data data = new Data(this.theUser, 0, null);
+        data.setProtocolTag(ProtocolTag.EXTRACT);
+        Message message = new Message(null, data);
+        try {
+            this.channel.send(message);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
         this.headerLabel.setText("Meu extrato");
         JTextArea textArea = new JTextArea(7, 30);
         textArea.setEditable(false);
@@ -324,6 +338,16 @@ public class UserScreen extends ReceiverAdapter {
                 }
                 break;
             case BALANCE:
+                this.headerLabel.setText(this.server.getBalance(this.theUser));
+                JButton menu = new JButton("Menu");
+                menu.addActionListener(e -> {
+                    this.controlPanel.removeAll();
+                    this.mainFrame.setVisible(false);
+                    this.statusLabel.setVisible(false);
+                    this.showMenu();
+                });
+                this.controlPanel.add(menu);
+                this.mainFrame.setVisible(true);
                 break;
             case EXTRACT:
                 break;

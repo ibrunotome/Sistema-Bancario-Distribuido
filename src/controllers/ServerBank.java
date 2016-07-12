@@ -21,7 +21,7 @@ public class ServerBank extends ReceiverAdapter {
     private JChannel channel;
 
     public ServerBank() throws Exception {
-        this.start();
+        //this.start();
     }
 
     /**
@@ -157,11 +157,12 @@ public class ServerBank extends ReceiverAdapter {
         this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
         this.channel.setReceiver(this); //quem irá lidar com as mensagens recebidas
         this.channel.connect("BCBankGroup");
-        //eventLoop();
-        this.channel.close();
+
+        //this.channel.close();
     }
 
     public static void main(String args[]) throws Exception {
         ServerBank server = new ServerBank();
+        server.start();
     }
 }
