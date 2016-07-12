@@ -297,10 +297,10 @@ public class UserScreen extends ReceiverAdapter {
      *****************************************************************************************/
 
     private void start() throws Exception {
-        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
-        this.channel.setReceiver(this);    //quem irá lidar com as mensagens recebidas
+        this.channel = new JChannel("xml-configs/udp.xml"); // Usa a configuração default
+        this.channel.setReceiver(this);                     // Quem irá lidar com as mensagens recebidas
         this.channel.connect("BCBankGroup");
-        //eventLoop();
+        // eventLoop();
         // this.channel.close();
     }
 
