@@ -13,5 +13,5 @@ public enum ProtocolTag {
     BALANCE,
     EXTRACT,
     SINGUP,
-    TOSTRINGSERVER,
+    TO_STRING_SERVER,
 }

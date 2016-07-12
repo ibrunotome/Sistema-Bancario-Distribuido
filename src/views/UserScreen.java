@@ -106,7 +106,7 @@ public class UserScreen extends ReceiverAdapter {
 
 
         Data data = new Data();
-        data.setProtocolTag(ProtocolTag.TOSTRINGSERVER);
+        data.setProtocolTag(ProtocolTag.TO_STRING_SERVER);
 
         Message message = new Message(null, data);
         try {
@@ -240,7 +240,6 @@ public class UserScreen extends ReceiverAdapter {
 
         JButton transferButton = new JButton("Transferir");
         transferButton.addActionListener(e -> {
-
             // send a message to server to make the transference
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             data.setProtocolTag(ProtocolTag.TRANSFER);
@@ -250,7 +249,6 @@ public class UserScreen extends ReceiverAdapter {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-
 
         });
 
@@ -275,8 +273,6 @@ public class UserScreen extends ReceiverAdapter {
      * Get the balance of the user account
      */
     private void getBalance() {
-
-
         // send a message to server to make the transference
         Data data = new Data(this.theUser, 0, null);
         data.setProtocolTag(ProtocolTag.BALANCE);
@@ -287,15 +283,12 @@ public class UserScreen extends ReceiverAdapter {
             e1.printStackTrace();
         }
 
-
     }
 
     /**
      * Print the extractinto textarea element
      */
     private void extract() {
-
-
         Data data = new Data(this.theUser, 0, null);
         data.setProtocolTag(ProtocolTag.EXTRACT);
         Message message = new Message(null, data);
@@ -304,9 +297,6 @@ public class UserScreen extends ReceiverAdapter {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-
-
-
     }
 
     /******************************************************************************************
@@ -341,7 +331,6 @@ public class UserScreen extends ReceiverAdapter {
                 }
                 break;
             case BALANCE:
-
                 this.headerLabel.setText(data.getText());
                 JButton menu = new JButton("Menu");
                 menu.addActionListener(e -> {
@@ -353,16 +342,11 @@ public class UserScreen extends ReceiverAdapter {
                 this.controlPanel.add(menu);
                 this.mainFrame.setVisible(true);
                 break;
-
-
             case EXTRACT:
-
                 this.headerLabel.setText("Meu extrato");
                 JTextArea textArea = new JTextArea(7, 30);
                 textArea.setEditable(false);
-
                 textArea.setText(data.getText());
-
                 JScrollPane scroll = new JScrollPane(textArea);
                 scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
                 menu = new JButton("Menu");
@@ -375,13 +359,10 @@ public class UserScreen extends ReceiverAdapter {
                 this.controlPanel.add(scroll);
                 this.controlPanel.add(menu);
                 this.mainFrame.setVisible(true);
-
                 break;
             case SINGUP:
                 MessageAlertTag messageAlertTag;
                 messageAlertTag = accountReceive.getAlertTag();
-
-
                 this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
                 this.statusLabel.setVisible(true);
                 if (messageAlertTag == MessageAlertTag.SIGNUP_SUCCESSFUL) {
@@ -392,9 +373,8 @@ public class UserScreen extends ReceiverAdapter {
                     this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
                     this.showMenu();
                 }
-
                 break;
-            case TOSTRINGSERVER:
+            case TO_STRING_SERVER:
                 this.toStringServer = data.getText();
                 break;
             default:
