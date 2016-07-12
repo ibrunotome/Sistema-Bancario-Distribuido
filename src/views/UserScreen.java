@@ -310,8 +310,8 @@ public class UserScreen extends ReceiverAdapter {
             case TRANSFER:
                 break;
             case LOGIN:
-                this.statusLabel.setText(MessageAlert.toString(data.getAlertTag()));
-                if (data.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
+                this.statusLabel.setText(MessageAlert.toString(data.getAccountAux().getAlertTag()));
+                if (data.getAccountAux().getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
                     this.controlPanel.removeAll();
                     this.mainFrame.setVisible(false);
                     this.statusLabel.setText(this.server.toString());
