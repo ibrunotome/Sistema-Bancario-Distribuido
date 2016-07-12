@@ -12,5 +12,6 @@ public enum ProtocolTag {
     LOGIN,
     BALANCE,
     EXTRACT,
-    SINGUP
+    SINGUP,
+    TOSTRINGSERVER,
 }

@@ -1,7 +1,6 @@
 package views;
 
 import controllers.MessageAlert;
-import controllers.ServerBank;
 import models.Account;
 import models.Data;
 import models.MessageAlertTag;
@@ -25,9 +24,11 @@ import java.awt.event.WindowEvent;
  */
 public class UserScreen extends ReceiverAdapter {
 
-    private ServerBank server = new ServerBank();
+
     private Account theUser = new Account();
     private JChannel channel;
+
+    private String toStringServer;
 
     // GUI variables
     private JFrame mainFrame;
@@ -103,13 +104,27 @@ public class UserScreen extends ReceiverAdapter {
             this.login();
         });
 
-        this.statusLabel.setText(this.server.toString());
+
+        Data data = new Data();
+        data.setProtocolTag(ProtocolTag.TOSTRINGSERVER);
+
+        Message message = new Message(null, data);
+        try {
+            this.channel.send(message);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        this.statusLabel.setText(toStringServer);
         this.statusLabel.setVisible(true);
         this.controlPanel.add(transferButton);
         this.controlPanel.add(showBalanceButton);
         this.controlPanel.add(extract);
         this.controlPanel.add(exit);
         this.mainFrame.setVisible(true);
+
+
+
     }
 
     /**
@@ -136,6 +151,7 @@ public class UserScreen extends ReceiverAdapter {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
+
         });
 
         JButton signupButton = new JButton("Não possui conta?");
@@ -317,7 +333,7 @@ public class UserScreen extends ReceiverAdapter {
                 if (accountReceive.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
                     this.controlPanel.removeAll();
                     this.mainFrame.setVisible(false);
-                    this.statusLabel.setText(this.server.toString());
+                    this.statusLabel.setText(data.getText());
                     this.statusLabel.setVisible(true);
                     this.theUser = accountReceive;
                     this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
@@ -377,6 +393,9 @@ public class UserScreen extends ReceiverAdapter {
                     this.showMenu();
                 }
 
+                break;
+            case TOSTRINGSERVER:
+                this.toStringServer = data.getText();
                 break;
             default:
                 break;
