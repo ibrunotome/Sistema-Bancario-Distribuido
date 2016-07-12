@@ -171,23 +171,24 @@ public class UserScreen extends ReceiverAdapter {
 
         JButton signup = new JButton("Cadastrar");
         signup.addActionListener(e -> {
-            MessageAlertTag messageAlertTag;
+
             Account accountAux = new Account();
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setName(name.getText());
             accountAux.setPassword(password.getText());
             accountAux.setBalance(Double.parseDouble(amount.getText()));
-            messageAlertTag = server.signUp(accountAux);
-            this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
-            this.statusLabel.setVisible(true);
-            if (messageAlertTag == MessageAlertTag.SIGNUP_SUCCESSFUL) {
-                this.controlPanel.removeAll();
-                this.mainFrame.setVisible(false);
-                this.statusLabel.setVisible(false);
-                this.theUser = accountAux;
-                this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
-                this.showMenu();
+
+            // send a message to server to singUP
+            Data data = new Data(accountAux, 0, null);
+            data.setProtocolTag(ProtocolTag.SINGUP);
+            Message message = new Message(null, data);
+            try {
+                this.channel.send(message);
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
+
+
         });
 
         JButton menu = new JButton("Voltar");
@@ -348,7 +349,7 @@ public class UserScreen extends ReceiverAdapter {
 
                 JScrollPane scroll = new JScrollPane(textArea);
                 scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-                JButton menu = new JButton("Menu");
+                menu = new JButton("Menu");
                 menu.addActionListener(e -> {
                     this.controlPanel.removeAll();
                     this.mainFrame.setVisible(false);
@@ -358,6 +359,23 @@ public class UserScreen extends ReceiverAdapter {
                 this.controlPanel.add(scroll);
                 this.controlPanel.add(menu);
                 this.mainFrame.setVisible(true);
+
+                break;
+            case SINGUP:
+                MessageAlertTag messageAlertTag;
+                messageAlertTag = accountReceive.getAlertTag();
+
+
+                this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
+                this.statusLabel.setVisible(true);
+                if (messageAlertTag == MessageAlertTag.SIGNUP_SUCCESSFUL) {
+                    this.controlPanel.removeAll();
+                    this.mainFrame.setVisible(false);
+                    this.statusLabel.setVisible(false);
+                    this.theUser = accountReceive;
+                    this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
+                    this.showMenu();
+                }
 
                 break;
             default:

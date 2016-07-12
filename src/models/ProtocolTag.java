@@ -11,5 +11,6 @@ public enum ProtocolTag {
     TRANSFER,
     LOGIN,
     BALANCE,
-    EXTRACT
+    EXTRACT,
+    SINGUP
 }
