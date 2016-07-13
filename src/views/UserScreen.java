@@ -28,11 +28,10 @@ import static org.jgroups.Message.*;
  */
 public class UserScreen extends ReceiverAdapter implements Serializable {
 
+    public boolean CONTINUE = true;
     private Account theUser = new Account();
     private JChannel channel;
     private String toStringServer = "";
-    public boolean CONTINUE = true;
-
     // GUI variables
     private JFrame mainFrame;
     private JLabel headerLabel;
@@ -43,6 +42,18 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         this.prepareGUI();
         this.login();
         this.start();
+    }
+
+    /**
+     * Prepare the GUI for the user, showing the login screen
+     *
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String args[]) throws Exception {
+        // Use this property because an error reporting the unavailability of IPV6
+        System.setProperty("java.net.preferIPv4Stack", "true");
+        UserScreen screen = new UserScreen();
     }
 
     /**
@@ -112,15 +123,16 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         // Set the protocol tag to receive method of ServerBank class work on it
         Data data = new Data();
         data.setProtocolTag(ProtocolTag.TO_STRING_SERVER);
+        Address memberOfBank = this.channel.getView().getMembers().get(0);
 
         /**
          * Send a message to the channel, ServerBank will send back the
          * total amount of cash in the bank and this message will be
          * displayed in a label on the main menu
          */
-        Message message = new Message(null, data);
+        Message request = new Message(memberOfBank, data);
         try {
-            this.channel.send(message);
+            this.channel.send(request);
         } catch (Exception e1) {
             e1.printStackTrace();
         }
@@ -166,8 +178,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             Message request = new Message(memberOfBank, data);
 
 
-            //ORIGINAL: logava em TODOS membros, multicast
-            //Message pedido = new Message(null, data);
             try {
                 this.channel.send(request);
             } catch (Exception e1) {
@@ -220,12 +230,16 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
              * tag SIGNUP to try to make a new Account in the system and get the
              * response back into the receive method in this class
              */
+
+            Address memberOfBank = this.channel.getView().getMembers().get(0);
+
             Data data = new Data();
             data.setAccountAux(accountAux);
             data.setProtocolTag(ProtocolTag.SINGUP);
-            Message message = new Message(null, data);
+            Message request = new Message(memberOfBank, data);
+
             try {
-                this.channel.send(message);
+                this.channel.send(request);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -274,8 +288,9 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
              */
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             data.setProtocolTag(ProtocolTag.TRANSFER);
-            Message message = new Message(null, data);
-           // message.setFlag(Flag.RSVP);
+            Address memberOfBank = this.channel.getView().getMembers().get(0);
+            Message message = new Message(memberOfBank, data);
+            message.setFlag(Flag.RSVP);
             try {
                 this.channel.send(message);
             } catch (Exception e1) {
@@ -311,7 +326,8 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         Data data = new Data();
         data.setAccountAux(this.theUser);
         data.setProtocolTag(ProtocolTag.BALANCE);
-        Message message = new Message(null, data);
+        Address memberOfBank = this.channel.getView().getMembers().get(0);
+        Message message = new Message(memberOfBank, data);
         try {
             this.channel.send(message);
         } catch (Exception e1) {
@@ -328,7 +344,8 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         Data data = new Data();
         data.setAccountAux(this.theUser);
         data.setProtocolTag(ProtocolTag.EXTRACT);
-        Message message = new Message(null, data);
+        Address memberOfBank = this.channel.getView().getMembers().get(0);
+        Message message = new Message(memberOfBank, data);
         try {
             this.channel.send(message);
         } catch (Exception e1) {
@@ -372,6 +389,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                     this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
                     this.showMenu();
                 }
+
                 break;
             case BALANCE:
                 /**
@@ -462,17 +480,5 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             Thread.sleep(100);
         }
         this.channel.close();
-    }
-
-    /**
-     * Prepare the GUI for the user, showing the login screen
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String args[]) throws Exception {
-        // Use this property because an error reporting the unavailability of IPV6
-        System.setProperty("java.net.preferIPv4Stack", "true");
-        UserScreen screen = new UserScreen();
     }
 }

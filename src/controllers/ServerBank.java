@@ -41,10 +41,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
             accountAux.setAlertTag(MessageAlertTag.LOGIN_SUCCESSFUL);
 
         } else {
+            accountAux = new Account();
             accountAux.setAlertTag(MessageAlertTag.LOGIN_ERROR);
         }
-        a = accountAux;
-        return accountAux;
+      return accountAux;
     }
 
     /**
@@ -103,6 +103,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
 
     public MessageAlertTag signUp(Account newUser) {
+
         if (this.BCBank.getAllAccounts().get(newUser.getAccountNumber()) == null) {
             this.BCBank.addAccount(newUser);
             return MessageAlertTag.SIGNUP_SUCCESSFUL;
@@ -128,7 +129,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * @return String
      */
     public String getExtract(Account a) {
-        return a.toString();
+        return a.getExtractToString();
     }
 
     /**
@@ -150,8 +151,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     public void receive(Message message) {
 
-        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): "+message.toString());
-        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
+        //System.out.println("DEBUG: ServerBank.receive()=>message.toString(): "+message.toString());
+        //System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
 
         Address solicitante = message.getSrc();
 
@@ -170,9 +171,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
                 accountReceived.setAlertTag(transferenceTag);
                 data.setAccountAux(accountReceived);
-                message.setObject(data);
+                Message respond = new Message(solicitante, data);
                 try {
-                    this.channel.send(message.getSrc(), message);
+                    this.channel.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -185,20 +186,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  * containing the alert tag with the message if the login was successful or not
                  */
                 accountReceived = this.login(accountReceived);
-
-                System.out.println("DEBUG: ServerBank.login(): account="+accountReceived.toString());
-
-                //DEBUG
-                accountReceived.setAccountNumber(2016);
                 data.setAccountAux(accountReceived);
-                //System.out.println("\n\nENVIAR: \n "+data.toString());
+                respond = new Message(solicitante, data);
 
-                Message resposta = new Message(solicitante, data);
-                //message.setObject(data);
                 try {
-                    System.out.println("DEBUG: ServerBank.send() --> UserScreen: resposta.getObject="+resposta.getObject().toString());
-
-                    this.channel.send(resposta);   //envia mensagem unicast pro dst ou se for null, sera multicast
+                    this.channel.send(respond);   //envia mensagem unicast pro dst ou se for null, sera multicast
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -210,9 +202,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 String balance = this.getBalance(accountReceived);
                 data.setText(balance);
-                message.setObject(data);
+                respond = new Message(solicitante, data);
                 try {
-                    this.channel.send(message);
+                    this.channel.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -224,9 +216,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 String extract = this.getExtract(accountReceived);
                 data.setText(extract);
-                message.setObject(data);
+                respond = new Message(solicitante, data);
                 try {
-                    this.channel.send(message);
+                    this.channel.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -242,10 +234,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 accountReceived.setAlertTag(signupTag);
                 System.out.println("\n\nALERT_TAG: \n "+accountReceived.getAlertTag().toString());
                 data.setAccountAux(accountReceived);
-                System.out.println("\n\nENVIAR: \n "+data.toString());
-                message.setObject(data);
+                respond = new Message(solicitante, data);
+
                 try {
-                    this.channel.send(message);
+                    this.channel.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -256,9 +248,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  * send the data object back to the UserScreen with the total bank amount of cash text
                  */
                 data.setText(this.toString());
-                message.setObject(data);
+                respond = new Message(solicitante,data);
                 try {
-                    this.channel.send(message);
+                    this.channel.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
