@@ -1,6 +1,5 @@
 package models;
 
-import org.jgroups.JChannel;
 import org.jgroups.ReceiverAdapter;
 
 import java.io.*;

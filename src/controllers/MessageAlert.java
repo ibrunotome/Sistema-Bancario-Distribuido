@@ -1,8 +1,6 @@
 package controllers;
 
 import models.MessageAlertTag;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -15,8 +13,6 @@ import java.io.Serializable;
  */
 public class MessageAlert implements Serializable {
 
-    @NotNull
-    @Contract(pure = true)
     public static String toString(MessageAlertTag m) {
 
         switch (m) {

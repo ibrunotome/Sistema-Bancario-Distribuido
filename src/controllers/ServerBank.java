@@ -161,7 +161,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 data.setAccountAux(accountReceived);
                 message.setObject(data);
                 try {
-                    this.channel.send(message);
+                    this.channel.send(message.getSrc(), message);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

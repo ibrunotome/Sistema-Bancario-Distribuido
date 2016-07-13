@@ -16,6 +16,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serializable;
 
+import static org.jgroups.Message.*;
+
 /**
  * Class to show a GUI for users of BCBank
  *
@@ -37,6 +39,8 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     private JPanel controlPanel;
 
     public UserScreen() throws Exception {
+        this.prepareGUI();
+        this.login();
         this.start();
     }
 
@@ -159,7 +163,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
              */
             Message message = new Message(null, data);
             try {
-                this.channel.send(message);
+                this.channel.send(null, message);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -265,6 +269,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             data.setProtocolTag(ProtocolTag.TRANSFER);
             Message message = new Message(null, data);
+            message.setFlag(Flag.RSVP);
             try {
                 this.channel.send(message);
             } catch (Exception e1) {
@@ -347,11 +352,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                  * and show the main menu to this user
                  */
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
+                this.statusLabel.setVisible(true);
                 if (accountReceive.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
                     this.controlPanel.removeAll();
                     this.mainFrame.setVisible(false);
-                    this.statusLabel.setText(data.getText());
-                    this.statusLabel.setVisible(true);
                     this.theUser = accountReceive;
                     this.mainFrame.setTitle("BCBank - Bem vindo " + this.theUser.getName());
                     this.showMenu();
@@ -457,7 +461,5 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         // Use this property because an error reporting the unavailability of IPV6
         System.setProperty("java.net.preferIPv4Stack", "true");
         UserScreen screen = new UserScreen();
-        screen.prepareGUI();
-        screen.login();
     }
 }
