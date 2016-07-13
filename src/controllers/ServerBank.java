@@ -5,6 +5,7 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 
 /**
@@ -15,17 +16,20 @@ import java.util.Hashtable;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
-public class ServerBank extends ReceiverAdapter {
+public class ServerBank extends ReceiverAdapter implements Serializable {
 
     private Bank BCBank = new Bank();
     private JChannel channel;
+    public boolean CONTINUE = true;
 
     public ServerBank() throws Exception {
-        //this.start();
+        this.start();
     }
 
     /**
-     * Try to login into the system
+     * Check if the BCBank have the account passed into parameter, if there is,
+     * return this account with the alert tag LOGIN_SUCCESSFUL for the UserScreen receive method
+     * or return with the alert tag LOGIN_ERROR if there is not
      *
      * @param a
      * @return Account
@@ -42,7 +46,9 @@ public class ServerBank extends ReceiverAdapter {
     }
 
     /**
-     * Transfer an amount of cash between two accounts
+     * Check if toUser account exists and make a transference
+     * if there is no logical errors, returning the corresponding
+     * alert tags of each cause
      *
      * @param byUser
      * @param toUser
@@ -70,6 +76,7 @@ public class ServerBank extends ReceiverAdapter {
                 allAccounts.replace(byUser.getAccountNumber(), byUser);
                 allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
                 this.BCBank.setAllAccounts(allAccounts);
+                // Serialize the accounts after each transference
                 this.BCBank.saveState();
                 return MessageAlertTag.TRANSFER_SUCCESSFUL;
             } else if (amount <= 0) {
@@ -85,7 +92,9 @@ public class ServerBank extends ReceiverAdapter {
     }
 
     /**
-     * Create a new account if there isn't an equal account created yet
+     * Create a new account if there isn't an equal account created yet,
+     * return alert tag SIGNUP_SUCCESSFUL if there isn't, or SIGNUP_ERROR
+     * if the account already exist
      *
      * @param newUser
      * @return MessageAlertTag
@@ -120,21 +129,34 @@ public class ServerBank extends ReceiverAdapter {
         return a.toString();
     }
 
+    /**
+     * Sum the total cash of the bank
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return this.BCBank.sumBankCash();
     }
 
-    /******************************************************************************************
-     * Trying to make the distributed functions
-     *****************************************************************************************/
 
+    /**
+     * This method receive the messages from the group and make a
+     * switch of the protocol tag of the message and do the corresponding action
+     *
+     * @param message
+     */
     public void receive(Message message) {
         Data data = (Data) message.getObject();
         Account accountReceived = data.getAccountAux();
         switch (data.getProtocolTag()) {
             case TRANSFER:
-                MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberTotTransfer(), data.getAmount());
+                /**
+                 * If the received protocol tag in the message is TRANSFER,
+                 * try to make a transference between the to accounts passed to
+                 * the data object and send this object back to UserScreen
+                 */
+                MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
                 accountReceived.setAlertTag(transferenceTag);
                 data.setAccountAux(accountReceived);
                 message.setObject(data);
@@ -145,6 +167,12 @@ public class ServerBank extends ReceiverAdapter {
                 }
                 break;
             case LOGIN:
+                /**
+                 * If the received protocol tag in the message is LOGIN,
+                 * try to make the login with the to accounts passed by parameter
+                 * and send the data object back to User Screen with and account
+                 * containing the alert tag with the message if the login was successful or not
+                 */
                 data.setAccountAux(this.login(accountReceived));
                 data.setProtocolTag(ProtocolTag.LOGIN);
                 message.setObject(data);
@@ -155,6 +183,10 @@ public class ServerBank extends ReceiverAdapter {
                 }
                 break;
             case BALANCE:
+                /**
+                 * If the received protocol tag in the message is BALANCE,
+                 * send the data object back to the UserScreen with the balance text
+                 */
                 String balance = this.getBalance(accountReceived);
                 data.setText(balance);
                 message.setObject(data);
@@ -165,6 +197,10 @@ public class ServerBank extends ReceiverAdapter {
                 }
                 break;
             case EXTRACT:
+                /**
+                 * If the received protocol tag in the message is EXTRACT,
+                 * send the data object back to the UserScreen with the extract text
+                 */
                 String extract = this.getExtract(accountReceived);
                 data.setText(extract);
                 message.setObject(data);
@@ -175,6 +211,12 @@ public class ServerBank extends ReceiverAdapter {
                 }
                 break;
             case SINGUP:
+                /**
+                 * If the received protocol tag in the message is SIGNUP,
+                 * try to make create a new Account with signUp method, and send
+                 * a message back for the UserScreen with the received account
+                 * that contains the alert tag saying if the signup was successful or not
+                 */
                 MessageAlertTag signupTag = this.signUp(accountReceived);
                 accountReceived.setAlertTag(signupTag);
                 data.setAccountAux(accountReceived);
@@ -186,6 +228,10 @@ public class ServerBank extends ReceiverAdapter {
                 }
                 break;
             case TO_STRING_SERVER:
+                /**
+                 * If the received protocol tag in the message is TO_STRING_SERVER,
+                 * send the data object back to the UserScreen with the total bank amount of cash text
+                 */
                 data.setText(this.toString());
                 message.setObject(data);
                 try {
@@ -199,16 +245,25 @@ public class ServerBank extends ReceiverAdapter {
         }
     }
 
+    /**
+     * Instantiate the channel, set the xml with the configs,
+     * set this class as receiver, connect to the BCBankGroup
+     *
+     * @throws Exception
+     */
     private void start() throws Exception {
-        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
-        this.channel.setReceiver(this); //quem irá lidar com as mensagens recebidas
+        this.channel = new JChannel("xml-configs/udp.xml");
+        this.channel.setReceiver(this);
         this.channel.connect("BCBankGroup");
-
-        //this.channel.close();
+        while (CONTINUE) {
+            Thread.sleep(100);
+        }
+        this.channel.close();
     }
 
     public static void main(String args[]) throws Exception {
+        // Use this property because an error reporting the unavailability of IPV6
+        System.setProperty("java.net.preferIPv4Stack", "true");
         ServerBank server = new ServerBank();
-        server.start();
     }
 }

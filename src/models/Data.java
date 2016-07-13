@@ -1,5 +1,7 @@
 package models;
 
+import java.io.Serializable;
+
 /**
  * Struct to most used data
  *
@@ -7,22 +9,20 @@ package models;
  * @author Cláudio Menezes
  * @since 11/07/2016
  */
-public class Data {
+public class Data implements Serializable {
     private Account accountAux;
-    private int accountNumberTotTransfer;
+    private int accountNumberToTransfer;
     private Double amount;
     private ProtocolTag protocolTag;
     private String text;
-
-
 
     public Data() {
 
     }
 
-    public Data(Account accountAux, int accountNumberTotTransfer, Double amount) {
+    public Data(Account accountAux, int accountNumberToTransfer, Double amount) {
         this.accountAux = accountAux;
-        this.accountNumberTotTransfer = accountNumberTotTransfer;
+        this.accountNumberToTransfer = accountNumberToTransfer;
         this.amount = amount;
     }
 
@@ -42,12 +42,12 @@ public class Data {
         this.accountAux = accountAux;
     }
 
-    public int getAccountNumberTotTransfer() {
-        return accountNumberTotTransfer;
+    public int getAccountNumberToTransfer() {
+        return accountNumberToTransfer;
     }
 
-    public void setAccountNumberTotTransfer(int accountNumberTotTransfer) {
-        this.accountNumberTotTransfer = accountNumberTotTransfer;
+    public void setAccountNumberToTransfer(int accountNumberToTransfer) {
+        this.accountNumberToTransfer = accountNumberToTransfer;
     }
 
     public Double getAmount() {

@@ -1,5 +1,7 @@
 package models;
 
+import java.io.Serializable;
+
 /**
  * Enum to facility the return of alert messages
  *
@@ -7,7 +9,7 @@ package models;
  * @author Cláudio Menezes
  * @since 04/07/2016
  */
-public enum MessageAlertTag {
+public enum MessageAlertTag implements Serializable{
     LOGIN_SUCCESSFUL,
     LOGIN_ERROR,
     TRANSFER_SUCCESSFUL,

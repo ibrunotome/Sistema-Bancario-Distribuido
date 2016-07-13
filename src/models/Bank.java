@@ -17,10 +17,8 @@ public class Bank extends ReceiverAdapter implements Serializable {
     private final Double totalCash = 10000.0;
     private final int totalAccounts = 10;
     private Hashtable<Integer, Account> allAccounts = new Hashtable();
-    private JChannel channel;
 
     public Bank() throws Exception {
-        this.start();
         initalizeBank();
     }
 
@@ -145,15 +143,4 @@ public class Bank extends ReceiverAdapter implements Serializable {
         return "Soma total: " + total;
     }
 
-    /******************************************************************************************
-     * Trying to make the distributed functions
-     *****************************************************************************************/
-
-    private void start() throws Exception {
-        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
-        this.channel.setReceiver(this); //quem irá lidar com as mensagens recebidas
-        this.channel.connect("BCBankGroup");
-        //eventLoop();
-        this.channel.close();
-    }
 }

@@ -1,6 +1,10 @@
 package controllers;
 
 import models.MessageAlertTag;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.Serializable;
 
 /**
  * Class to make the toString for MessageAlertTags
@@ -9,8 +13,10 @@ import models.MessageAlertTag;
  * @author Cláudio Menezes
  * @since 04/07/2016
  */
-public class MessageAlert {
+public class MessageAlert implements Serializable {
 
+    @NotNull
+    @Contract(pure = true)
     public static String toString(MessageAlertTag m) {
 
         switch (m) {

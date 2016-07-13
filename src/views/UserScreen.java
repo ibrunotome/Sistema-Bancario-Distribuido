@@ -14,6 +14,7 @@ import java.awt.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serializable;
 
 /**
  * Class to show a GUI for users of BCBank
@@ -22,13 +23,12 @@ import java.awt.event.WindowEvent;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
-public class UserScreen extends ReceiverAdapter {
-
+public class UserScreen extends ReceiverAdapter implements Serializable {
 
     private Account theUser = new Account();
     private JChannel channel;
-
-    private String toStringServer;
+    private String toStringServer = "";
+    public boolean CONTINUE = true;
 
     // GUI variables
     private JFrame mainFrame;
@@ -68,7 +68,7 @@ public class UserScreen extends ReceiverAdapter {
     }
 
     /**
-     * Show the menu for logged user
+     * Show the main menu for logged user
      */
     private void showMenu() {
         this.headerLabel.setText("MENU");
@@ -104,10 +104,15 @@ public class UserScreen extends ReceiverAdapter {
             this.login();
         });
 
-
+        // Set the protocol tag to receive method of ServerBank class work on it
         Data data = new Data();
         data.setProtocolTag(ProtocolTag.TO_STRING_SERVER);
 
+        /**
+         * Send a message to the channel, ServerBank will send back the
+         * total amount of cash in the bank and this message will be
+         * displayed in a label on the main menu
+         */
         Message message = new Message(null, data);
         try {
             this.channel.send(message);
@@ -115,20 +120,19 @@ public class UserScreen extends ReceiverAdapter {
             e1.printStackTrace();
         }
 
-        this.statusLabel.setText(toStringServer);
+        this.statusLabel.setText(this.toStringServer);
         this.statusLabel.setVisible(true);
         this.controlPanel.add(transferButton);
         this.controlPanel.add(showBalanceButton);
         this.controlPanel.add(extract);
         this.controlPanel.add(exit);
         this.mainFrame.setVisible(true);
-
-
-
     }
 
     /**
-     * Try to login into the system
+     * Login GUI input fields. Get the inputed data and send a message
+     * to receive method in the ServerBank class with the tag LOGIN,
+     * trying to login into the system
      */
     public void login() {
         this.headerLabel.setText("Digite o número da conta e senha para login");
@@ -139,19 +143,26 @@ public class UserScreen extends ReceiverAdapter {
 
         JButton loginButton = new JButton("Login");
         loginButton.addActionListener(e -> {
+            // Create an auxiliar account to try login into the system
             Account accountAux = new Account();
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setPassword(passwordText.getText());
+
+            // Set the protocolTag to send to method receive on ServerBank
             Data data = new Data();
             data.setProtocolTag(ProtocolTag.LOGIN);
             data.setAccountAux(accountAux);
+            /**
+             * Send a message to the receive method in the ServerBank class with the tag LOGIN
+             * and the account that will be used to try to login  in the system and get the
+             * response back on the receive method of this class
+             */
             Message message = new Message(null, data);
             try {
                 this.channel.send(message);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-
         });
 
         JButton signupButton = new JButton("Não possui conta?");
@@ -172,7 +183,7 @@ public class UserScreen extends ReceiverAdapter {
     }
 
     /**
-     * Show the signUpMenu for users
+     * Show the signupMenu for users
      */
     private void showSignUpMenu() {
         this.headerLabel.setText("CRIAR NOVA CONTA");
@@ -187,15 +198,20 @@ public class UserScreen extends ReceiverAdapter {
 
         JButton signup = new JButton("Cadastrar");
         signup.addActionListener(e -> {
-
+            // Instantiate and set the attributes
             Account accountAux = new Account();
             accountAux.setAccountNumber(Integer.parseInt(accountNumber.getText()));
             accountAux.setName(name.getText());
             accountAux.setPassword(password.getText());
             accountAux.setBalance(Double.parseDouble(amount.getText()));
 
-            // send a message to server to singUP
-            Data data = new Data(accountAux, 0, null);
+            /**
+             * Send a message to reveive method on the ServerBank class with the
+             * tag SIGNUP to try to make a new Account in the system and get the
+             * response back into the receive method in this class
+             */
+            Data data = new Data();
+            data.setAccountAux(accountAux);
             data.setProtocolTag(ProtocolTag.SINGUP);
             Message message = new Message(null, data);
             try {
@@ -203,8 +219,6 @@ public class UserScreen extends ReceiverAdapter {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-
-
         });
 
         JButton menu = new JButton("Voltar");
@@ -229,7 +243,10 @@ public class UserScreen extends ReceiverAdapter {
     }
 
     /**
-     * Transfer an amount of cash between two accounts
+     * Transfer GUI input fields. Get the inputed data and
+     * try to make a transfer of cash between two accounts sending
+     * a message to the ServerBank class with the tag TRANSFER.
+     * Get the response back into the receive method of this class
      */
     private void transference() {
         this.headerLabel.setText("TRANSFERÊNCIA");
@@ -240,7 +257,11 @@ public class UserScreen extends ReceiverAdapter {
 
         JButton transferButton = new JButton("Transferir");
         transferButton.addActionListener(e -> {
-            // send a message to server to make the transference
+            /**
+             * Send a message to receive method on ServerBank class, using the
+             * TRANSFER tag to make the transference and get the response back on
+             * receive method of this class
+             */
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             data.setProtocolTag(ProtocolTag.TRANSFER);
             Message message = new Message(null, data);
@@ -270,11 +291,14 @@ public class UserScreen extends ReceiverAdapter {
     }
 
     /**
-     * Get the balance of the user account
+     * Send a message to receive method of ServerBank class with the
+     * tag BALANCE. Get the response back with the balance on the
+     * receive method of this class
      */
     private void getBalance() {
-        // send a message to server to make the transference
-        Data data = new Data(this.theUser, 0, null);
+        // Send a message to server to make the transference
+        Data data = new Data();
+        data.setAccountAux(this.theUser);
         data.setProtocolTag(ProtocolTag.BALANCE);
         Message message = new Message(null, data);
         try {
@@ -282,14 +306,16 @@ public class UserScreen extends ReceiverAdapter {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-
     }
 
     /**
-     * Print the extractinto textarea element
+     * Send a message to receive method of ServerBank class with the
+     * tag EXTRACT. Get the response back with the balance on the
+     * receive method of this class
      */
     private void extract() {
-        Data data = new Data(this.theUser, 0, null);
+        Data data = new Data();
+        data.setAccountAux(this.theUser);
         data.setProtocolTag(ProtocolTag.EXTRACT);
         Message message = new Message(null, data);
         try {
@@ -299,26 +325,27 @@ public class UserScreen extends ReceiverAdapter {
         }
     }
 
-    /******************************************************************************************
-     * Trying to make the distributed functions
-     *****************************************************************************************/
-
-    private void start() throws Exception {
-        this.channel = new JChannel("xml-configs/udp.xml");        //usa a configuração default
-        this.channel.setReceiver(this);    //quem irá lidar com as mensagens recebidas
-        this.channel.connect("BCBankGroup");
-        this.channel.close();
-    }
-
+    @Override
     public void receive(Message message) {
         Data data = (Data) message.getObject();
         Account accountReceive = data.getAccountAux();
         switch (data.getProtocolTag()) {
             case TRANSFER:
+                /**
+                 * If the received protocol tag in the message is TRANSFER,
+                 * set the statusLabel text with the string that correspond with the
+                 * alert tag of the account received in the message
+                 */
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
                 this.statusLabel.setVisible(true);
                 break;
             case LOGIN:
+                /**
+                 * If the received protocol tag in the message is LOGIN,
+                 * check if the message alert tag is LOGIN_SUCCESSFUL, if is it, set
+                 * the global variable theUser with the account received in the message
+                 * and show the main menu to this user
+                 */
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
                 if (accountReceive.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
                     this.controlPanel.removeAll();
@@ -331,6 +358,12 @@ public class UserScreen extends ReceiverAdapter {
                 }
                 break;
             case BALANCE:
+                /**
+                 * If the received protocol tag in the message is BALANCE,
+                 * set the headerLabel text with the balance of this user.
+                 *
+                 * The data.getText() contains the balance string
+                 */
                 this.headerLabel.setText(data.getText());
                 JButton menu = new JButton("Menu");
                 menu.addActionListener(e -> {
@@ -343,9 +376,14 @@ public class UserScreen extends ReceiverAdapter {
                 this.mainFrame.setVisible(true);
                 break;
             case EXTRACT:
+                /**
+                 * If the received protocol tag in the message is EXTRACT,
+                 * set the textArea below with the extract of this user
+                 */
                 this.headerLabel.setText("Meu extrato");
                 JTextArea textArea = new JTextArea(7, 30);
                 textArea.setEditable(false);
+                // the data.getText contains the extract string
                 textArea.setText(data.getText());
                 JScrollPane scroll = new JScrollPane(textArea);
                 scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -361,6 +399,11 @@ public class UserScreen extends ReceiverAdapter {
                 this.mainFrame.setVisible(true);
                 break;
             case SINGUP:
+                /**
+                 * If the received protocol tag in the message is SIGNUP,
+                 * check if the messageAlertTag in the receivedAccount of the message
+                 * have the tag SIGNUP_SUCCESSFUL and show the main menu if is it
+                 */
                 MessageAlertTag messageAlertTag;
                 messageAlertTag = accountReceive.getAlertTag();
                 this.statusLabel.setText(MessageAlert.toString(messageAlertTag));
@@ -375,14 +418,44 @@ public class UserScreen extends ReceiverAdapter {
                 }
                 break;
             case TO_STRING_SERVER:
+                /**
+                 * If the received protocol tag in the message is TO_STRING_SERVER,
+                 * set the statusLabel below with the total bank amount of cash
+                 */
                 this.toStringServer = data.getText();
+                this.statusLabel.setText(this.toStringServer);
+                this.statusLabel.setVisible(true);
                 break;
             default:
                 break;
         }
     }
 
+    /**
+     * Instantiate the channel, set the xml with the configs,
+     * set this class as receiver, connect to the BCBankGroup
+     *
+     * @throws Exception
+     */
+    private void start() throws Exception {
+        this.channel = new JChannel("xml-configs/udp.xml");
+        this.channel.setReceiver(this);
+        this.channel.connect("BCBankGroup");
+        while (CONTINUE) {
+            Thread.sleep(100);
+        }
+        this.channel.close();
+    }
+
+    /**
+     * Prepare the GUI for the user, showing the login screen
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String args[]) throws Exception {
+        // Use this property because an error reporting the unavailability of IPV6
+        System.setProperty("java.net.preferIPv4Stack", "true");
         UserScreen screen = new UserScreen();
         screen.prepareGUI();
         screen.login();
