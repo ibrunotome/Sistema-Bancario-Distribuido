@@ -1,6 +1,7 @@
 package controllers;
 
 import models.*;
+import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
@@ -38,11 +39,12 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         Account accountAux = this.BCBank.getAllAccounts().get(a.getAccountNumber());
         if (accountAux != null && accountAux.getPassword().equals(a.getPassword())) {
             accountAux.setAlertTag(MessageAlertTag.LOGIN_SUCCESSFUL);
-            return accountAux;
+
         } else {
             accountAux.setAlertTag(MessageAlertTag.LOGIN_ERROR);
-            return accountAux;
         }
+        a = accountAux;
+        return accountAux;
     }
 
     /**
@@ -147,8 +149,17 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * @param message
      */
     public void receive(Message message) {
+
+        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): "+message.toString());
+        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
+
+        Address solicitante = message.getSrc();
+
         Data data = (Data) message.getObject();
         Account accountReceived = data.getAccountAux();
+
+        //System.out.println("\n\nRecebida: \n "+data.toString());
+
         switch (data.getProtocolTag()) {
             case TRANSFER:
                 /**
@@ -173,11 +184,21 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  * and send the data object back to User Screen with and account
                  * containing the alert tag with the message if the login was successful or not
                  */
-                data.setAccountAux(this.login(accountReceived));
-                data.setProtocolTag(ProtocolTag.LOGIN);
-                message.setObject(data);
+                accountReceived = this.login(accountReceived);
+
+                System.out.println("DEBUG: ServerBank.login(): account="+accountReceived.toString());
+
+                //DEBUG
+                accountReceived.setAccountNumber(2016);
+                data.setAccountAux(accountReceived);
+                //System.out.println("\n\nENVIAR: \n "+data.toString());
+
+                Message resposta = new Message(solicitante, data);
+                //message.setObject(data);
                 try {
-                    this.channel.send(message);
+                    System.out.println("DEBUG: ServerBank.send() --> UserScreen: resposta.getObject="+resposta.getObject().toString());
+
+                    this.channel.send(resposta);   //envia mensagem unicast pro dst ou se for null, sera multicast
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -219,7 +240,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 MessageAlertTag signupTag = this.signUp(accountReceived);
                 accountReceived.setAlertTag(signupTag);
+                System.out.println("\n\nALERT_TAG: \n "+accountReceived.getAlertTag().toString());
                 data.setAccountAux(accountReceived);
+                System.out.println("\n\nENVIAR: \n "+data.toString());
                 message.setObject(data);
                 try {
                     this.channel.send(message);
@@ -253,6 +276,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     private void start() throws Exception {
         this.channel = new JChannel("xml-configs/udp.xml");
+        this.channel.setDiscardOwnMessages(true);
         this.channel.setReceiver(this);
         this.channel.connect("BCBankGroup");
         while (CONTINUE) {

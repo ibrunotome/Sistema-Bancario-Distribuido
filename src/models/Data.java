@@ -16,6 +16,7 @@ public class Data implements Serializable {
     private ProtocolTag protocolTag;
     private String text;
 
+
     public Data() {
 
     }
@@ -25,6 +26,8 @@ public class Data implements Serializable {
         this.accountNumberToTransfer = accountNumberToTransfer;
         this.amount = amount;
     }
+
+
 
     public ProtocolTag getProtocolTag() {
         return this.protocolTag;
@@ -64,5 +67,31 @@ public class Data implements Serializable {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String toString () {
+        String line = " ";
+
+        if(this.accountAux != null){
+            line += "\n Acount: "+ this.accountAux.toString();
+        }
+
+        if(this.accountNumberToTransfer != -1){
+            line += "\n AcountNumberTransfer: "+this.accountNumberToTransfer;
+        }
+
+        if(this.amount != null){
+            line += "\n Amount: "+this.amount;
+        }
+
+        if(this.protocolTag != null){
+            line += "\n protocolTag: "+this.protocolTag.toString();
+        }
+
+        if(this.text != null){
+            line += "\n Text: "+this.text;
+        }
+
+        return line;
     }
 }

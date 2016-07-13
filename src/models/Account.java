@@ -74,8 +74,8 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "\n----------------------------\nNome: " + this.name + "\nSaldo: R$ " + this.balance + "\n----------------------------\n";
+        return "\n----------------------------\nnumber: "+this.accountNumber+"\n password: "+this.password+"\nNome: " + this.name + "\nSaldo: R$ " + this.balance  +"\n----------------------------\n";
     }
-
+//+"\nAlertTag"+this.alertTag.toString()
 
 }

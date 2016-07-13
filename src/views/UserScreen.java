@@ -5,6 +5,7 @@ import models.Account;
 import models.Data;
 import models.MessageAlertTag;
 import models.ProtocolTag;
+import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
@@ -161,9 +162,14 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
              * and the account that will be used to try to login  in the system and get the
              * response back on the receive method of this class
              */
-            Message message = new Message(null, data);
+            Address memberOfBank = this.channel.getView().getMembers().get(0);
+            Message request = new Message(memberOfBank, data);
+
+
+            //ORIGINAL: logava em TODOS membros, multicast
+            //Message pedido = new Message(null, data);
             try {
-                this.channel.send(null, message);
+                this.channel.send(request);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -269,7 +275,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             data.setProtocolTag(ProtocolTag.TRANSFER);
             Message message = new Message(null, data);
-            message.setFlag(Flag.RSVP);
+           // message.setFlag(Flag.RSVP);
             try {
                 this.channel.send(message);
             } catch (Exception e1) {
@@ -332,8 +338,13 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
     @Override
     public void receive(Message message) {
-        Data data = (Data) message.getObject();
+
+        //System.out.println("DEBUG: UserScreen.receive()=>message.toString(): "+message.toString());
+        //System.out.println("DEBUG: UserScreen.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
+
+        Data data = (Data) (message.getObject());
         Account accountReceive = data.getAccountAux();
+
         switch (data.getProtocolTag()) {
             case TRANSFER:
                 /**
@@ -351,6 +362,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                  * the global variable theUser with the account received in the message
                  * and show the main menu to this user
                  */
+
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
                 this.statusLabel.setVisible(true);
                 if (accountReceive.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
@@ -443,6 +455,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      */
     private void start() throws Exception {
         this.channel = new JChannel("xml-configs/udp.xml");
+        this.channel.setDiscardOwnMessages(true);
         this.channel.setReceiver(this);
         this.channel.connect("BCBankGroup");
         while (CONTINUE) {
