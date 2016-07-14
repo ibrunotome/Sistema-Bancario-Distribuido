@@ -45,18 +45,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     }
 
     /**
-     * Prepare the GUI for the user, showing the login screen
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String args[]) throws Exception {
-        // Use this property because an error reporting the unavailability of IPV6
-        System.setProperty("java.net.preferIPv4Stack", "true");
-        UserScreen screen = new UserScreen();
-    }
-
-    /**
      * Prepare the initial GUI, set the mainFrame that will be used
      * for put any other kind of graphic element
      */
@@ -480,5 +468,17 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             Thread.sleep(100);
         }
         this.channel.close();
+    }
+
+    /**
+     * Prepare the GUI for the user, showing the login screen
+     *
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String args[]) throws Exception {
+        // Use this property because an error reporting the unavailability of IPV6
+        System.setProperty("java.net.preferIPv4Stack", "true");
+        UserScreen screen = new UserScreen();
     }
 }

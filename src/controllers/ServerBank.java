@@ -156,7 +156,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         //System.out.println("DEBUG: ServerBank.receive()=>message.toString(): "+message.toString());
         //System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
 
-        Address solicitante = message.getSrc();
+        Address sender = message.getSrc();
 
         Data data = (Data) message.getObject();
         Account accountReceived = data.getAccountAux();
@@ -173,7 +173,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
                 accountReceived.setAlertTag(transferenceTag);
                 data.setAccountAux(accountReceived);
-                Message respond = new Message(solicitante, data);
+                Message respond = new Message(sender, data);
                 try {
                     this.channel.send(respond);
                 } catch (Exception e) {
@@ -189,7 +189,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 accountReceived = this.login(accountReceived);
                 data.setAccountAux(accountReceived);
-                respond = new Message(solicitante, data);
+                respond = new Message(sender, data);
 
                 try {
                     this.channel.send(respond);   //envia mensagem unicast pro dst ou se for null, sera multicast
@@ -204,7 +204,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 String balance = this.getBalance(accountReceived);
                 data.setText(balance);
-                respond = new Message(solicitante, data);
+                respond = new Message(sender, data);
                 try {
                     this.channel.send(respond);
                 } catch (Exception e) {
@@ -218,7 +218,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 String extract = this.getExtract(accountReceived);
                 data.setText(extract);
-                respond = new Message(solicitante, data);
+                respond = new Message(sender, data);
                 try {
                     this.channel.send(respond);
                 } catch (Exception e) {
@@ -236,7 +236,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 accountReceived.setAlertTag(signupTag);
                 System.out.println("\n\nALERT_TAG: \n "+accountReceived.getAlertTag().toString());
                 data.setAccountAux(accountReceived);
-                respond = new Message(solicitante, data);
+                respond = new Message(sender, data);
 
                 try {
                     this.channel.send(respond);
@@ -250,7 +250,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  * send the data object back to the UserScreen with the total bank amount of cash text
                  */
                 data.setText(this.toString());
-                respond = new Message(solicitante,data);
+                respond = new Message(sender, data);
                 try {
                     this.channel.send(respond);
                 } catch (Exception e) {
