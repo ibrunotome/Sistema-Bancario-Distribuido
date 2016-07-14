@@ -87,6 +87,8 @@ public class Bank extends ReceiverAdapter implements Serializable {
      * @param amount
      */
     public void transference(Account a1, Account a2, Double amount) {
+       a1 = this.allAccounts.get(a1.getAccountNumber());
+       a2 = this.allAccounts.get(a2.getAccountNumber());
         a1.setBalance(a1.getBalance() - amount);
         a2.setBalance(a2.getBalance() + amount);
 

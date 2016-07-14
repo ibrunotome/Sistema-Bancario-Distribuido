@@ -73,11 +73,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                         + (toUserAux.getBalance()) + "\n----------------------------\n");
 
                 // Update the allAccounts of BCBank
-                Hashtable<Integer, Account> allAccounts;
-                allAccounts = this.BCBank.getAllAccounts();
-                allAccounts.replace(byUser.getAccountNumber(), byUser);
-                allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
-                this.BCBank.setAllAccounts(allAccounts);
+                //Hashtable<Integer, Account> allAccounts;
+                //allAccounts = this.BCBank.getAllAccounts();
+                //allAccounts.replace(byUser.getAccountNumber(), byUser);
+                //allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
+                //this.BCBank.setAllAccounts(allAccounts);
                 System.out.println(this.BCBank.getAllAccounts().toString());
                 // Serialize the accounts after each transference
                 this.BCBank.saveState();
