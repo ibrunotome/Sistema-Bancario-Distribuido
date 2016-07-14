@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Cláudio Menezes
  * @since 04/07/2016
  */
-public enum MessageAlertTag implements Serializable{
+public enum MessageAlertTag implements Serializable {
     LOGIN_SUCCESSFUL,
     LOGIN_ERROR,
     TRANSFER_SUCCESSFUL,

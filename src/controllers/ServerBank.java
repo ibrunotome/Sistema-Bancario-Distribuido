@@ -7,7 +7,6 @@ import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 
 import java.io.Serializable;
-import java.util.Hashtable;
 
 /**
  * Controller that makes the comunications between the UserScreen view
@@ -44,7 +43,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
             accountAux = new Account();
             accountAux.setAlertTag(MessageAlertTag.LOGIN_ERROR);
         }
-      return accountAux;
+        return accountAux;
     }
 
     /**
@@ -234,7 +233,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 MessageAlertTag signupTag = this.signUp(accountReceived);
                 accountReceived.setAlertTag(signupTag);
-                System.out.println("\n\nALERT_TAG: \n "+accountReceived.getAlertTag().toString());
+                System.out.println("\n\nALERT_TAG: \n " + accountReceived.getAlertTag().toString());
                 data.setAccountAux(accountReceived);
                 respond = new Message(sender, data);
 
