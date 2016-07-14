@@ -20,7 +20,8 @@ import java.util.Hashtable;
 public class ServerBank extends ReceiverAdapter implements Serializable {
 
     private Bank BCBank = new Bank();
-    private JChannel channel;
+    private JChannel channelScreen;
+    private JChannel channelBank;
     public boolean CONTINUE = true;
 
     public ServerBank() throws Exception {
@@ -177,7 +178,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 data.setAccountAux(accountReceived);
                 Message respond = new Message(sender, data);
                 try {
-                    this.channel.send(respond);
+                    this.channelScreen.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -194,7 +195,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 respond = new Message(sender, data);
 
                 try {
-                    this.channel.send(respond);   //envia mensagem unicast pro dst ou se for null, sera multicast
+                    this.channelScreen.send(respond);   //envia mensagem unicast pro dst ou se for null, sera multicast
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -208,7 +209,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 data.setText(balance);
                 respond = new Message(sender, data);
                 try {
-                    this.channel.send(respond);
+                    this.channelScreen.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -222,7 +223,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 data.setText(extract);
                 respond = new Message(sender, data);
                 try {
-                    this.channel.send(respond);
+                    this.channelScreen.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -241,7 +242,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 respond = new Message(sender, data);
 
                 try {
-                    this.channel.send(respond);
+                    this.channelScreen.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -254,7 +255,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 data.setText(this.toString());
                 respond = new Message(sender, data);
                 try {
-                    this.channel.send(respond);
+                    this.channelScreen.send(respond);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -265,20 +266,28 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     }
 
     /**
-     * Instantiate the channel, set the xml with the configs,
+     * Instantiate the channelScreen, set the xml with the configs,
      * set this class as receiver, connect to the BCBankGroup
      *
      * @throws Exception
      */
     private void start() throws Exception {
-        this.channel = new JChannel("xml-configs/udp.xml");
-        this.channel.setDiscardOwnMessages(true);
-        this.channel.setReceiver(this);
-        this.channel.connect("BCBankGroup");
+        // channel Screem claster
+        this.channelScreen = new JChannel("xml-configs/udp.xml");
+        this.channelScreen.setDiscardOwnMessages(true);
+        this.channelScreen.setReceiver(this);
+        this.channelScreen.connect("BCBScreenGroup");
+
+        // channel bank claster
+        this.channelBank = new JChannel("xml-configs/udp.xml");
+        this.channelBank.setDiscardOwnMessages(true);
+        this.channelBank.setReceiver(this);
+        this.channelBank.connect("BCBankGroup");
+
         while (CONTINUE) {
             Thread.sleep(100);
         }
-        this.channel.close();
+        this.channelScreen.close();
     }
 
     public static void main(String args[]) throws Exception {

@@ -463,7 +463,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         this.channel = new JChannel("xml-configs/udp.xml");
         this.channel.setDiscardOwnMessages(true);
         this.channel.setReceiver(this);
-        this.channel.connect("BCBankGroup");
+        this.channel.connect("BCBScreenGroup");
         while (CONTINUE) {
             Thread.sleep(100);
         }
