@@ -7,6 +7,7 @@ import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 
 /**
  * Controller that makes the comunications between the UserScreen view
@@ -57,6 +58,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     public MessageAlertTag transference(Account byUser, int toUser, Double amount) {
         Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
+        byUser = this.BCBank.getAllAccounts().get(byUser.getAccountNumber());
+
         if (toUserAux != null && byUser.getAccountNumber() != toUserAux.getAccountNumber()) {
             if (byUser.getBalance() >= amount && amount > 0) {
                 this.BCBank.transference(byUser, toUserAux, amount);
@@ -72,11 +75,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                         + (toUserAux.getBalance()) + "\n----------------------------\n");
 
                 // Update the allAccounts of BCBank
-                //Hashtable<Integer, Account> allAccounts;
-                //allAccounts = this.BCBank.getAllAccounts();
-                //allAccounts.replace(byUser.getAccountNumber(), byUser);
-                //allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
-                //this.BCBank.setAllAccounts(allAccounts);
+                Hashtable<Integer, Account> allAccounts;
+                allAccounts = this.BCBank.getAllAccounts();
+                allAccounts.replace(byUser.getAccountNumber(), byUser);
+                allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
+                this.BCBank.setAllAccounts(allAccounts);
                 System.out.println(this.BCBank.getAllAccounts().toString());
                 // Serialize the accounts after each transference
                 this.BCBank.saveState();
