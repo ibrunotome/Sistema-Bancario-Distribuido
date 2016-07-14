@@ -78,6 +78,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 allAccounts.replace(byUser.getAccountNumber(), byUser);
                 allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
                 this.BCBank.setAllAccounts(allAccounts);
+                System.out.println(this.BCBank.getAllAccounts().toString());
                 // Serialize the accounts after each transference
                 this.BCBank.saveState();
                 return MessageAlertTag.TRANSFER_SUCCESSFUL;
@@ -129,6 +130,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * @return String
      */
     public String getExtract(Account a) {
+        this.BCBank.getAllAccounts().get(a.getAccountNumber());
         return a.getExtractToString();
     }
 

@@ -101,7 +101,8 @@ public class Bank extends ReceiverAdapter implements Serializable {
      * @return String
      */
     public String getBalance(Account a) {
-        return "O saldo da conta " + a.getAccountNumber() + " é: R$ " + a.getBalance();
+        Account accAux = allAccounts.get(a.getAccountNumber());
+        return "O saldo da conta " + accAux.getAccountNumber() + " é: R$ " + accAux.getBalance();
     }
 
     /**
