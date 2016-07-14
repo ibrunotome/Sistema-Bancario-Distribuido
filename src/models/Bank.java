@@ -12,6 +12,7 @@ import java.util.Hashtable;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
+@SuppressWarnings("unchecked")
 public class Bank extends ReceiverAdapter implements Serializable {
     private final Double totalCash = 10000.0;
     private final int totalAccounts = 10;

@@ -26,6 +26,7 @@ import static org.jgroups.Message.*;
  * @author Cláudio Menezes
  * @since 03/07/2016
  */
+@SuppressWarnings("deprecation")
 public class UserScreen extends ReceiverAdapter implements Serializable {
 
     public boolean CONTINUE = true;

@@ -272,13 +272,13 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * @throws Exception
      */
     private void start() throws Exception {
-        // channel Screem claster
+        // channel Screem cluster
         this.channelScreen = new JChannel("xml-configs/udp.xml");
         this.channelScreen.setDiscardOwnMessages(true);
         this.channelScreen.setReceiver(this);
         this.channelScreen.connect("BCBScreenGroup");
 
-        // channel bank claster
+        // channel bank cluster
         this.channelBank = new JChannel("xml-configs/udp.xml");
         this.channelBank.setDiscardOwnMessages(true);
         this.channelBank.setReceiver(this);
