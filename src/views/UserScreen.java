@@ -111,7 +111,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
         // Set the protocol tag to receive method of ServerBank class work on it
         Data data = new Data();
-        data.setProtocolTag(ProtocolTag.TO_STRING_SERVER);
+        data.setProtocolTag(ProtocolTag.SCREEN_TO_STRING_SERVER);
         Address memberOfBank = this.channel.getView().getMembers().get(0);
 
         /**
@@ -137,7 +137,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
     /**
      * Login GUI input fields. Get the inputed data and send a message
-     * to receive method in the ServerBank class with the tag LOGIN,
+     * to receive method in the ServerBank class with the tag SCREEN_LOGIN,
      * trying to login into the system
      */
     public void login() {
@@ -156,10 +156,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
             // Set the protocolTag to send to method receive on ServerBank
             Data data = new Data();
-            data.setProtocolTag(ProtocolTag.LOGIN);
+            data.setProtocolTag(ProtocolTag.SCREEN_LOGIN);
             data.setAccountAux(accountAux);
             /**
-             * Send a message to the receive method in the ServerBank class with the tag LOGIN
+             * Send a message to the receive method in the ServerBank class with the tag SCREEN_LOGIN
              * and the account that will be used to try to login  in the system and get the
              * response back on the receive method of this class
              */
@@ -224,7 +224,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
             Data data = new Data();
             data.setAccountAux(accountAux);
-            data.setProtocolTag(ProtocolTag.SINGUP);
+            data.setProtocolTag(ProtocolTag.SCREEN_SINGUP);
             Message request = new Message(memberOfBank, data);
 
             try {
@@ -258,7 +258,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     /**
      * Transfer GUI input fields. Get the inputed data and
      * try to make a transfer of cash between two accounts sending
-     * a message to the ServerBank class with the tag TRANSFER.
+     * a message to the ServerBank class with the tag SCREEN_TRANSFER.
      * Get the response back into the receive method of this class
      */
     private void transference() {
@@ -272,11 +272,11 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         transferButton.addActionListener(e -> {
             /**
              * Send a message to receive method on ServerBank class, using the
-             * TRANSFER tag to make the transference and get the response back on
+             * SCREEN_TRANSFER tag to make the transference and get the response back on
              * receive method of this class
              */
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
-            data.setProtocolTag(ProtocolTag.TRANSFER);
+            data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
             Address memberOfBank = this.channel.getView().getMembers().get(0);
             Message message = new Message(memberOfBank, data);
             message.setFlag(Flag.RSVP);
@@ -307,14 +307,14 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
     /**
      * Send a message to receive method of ServerBank class with the
-     * tag BALANCE. Get the response back with the balance on the
+     * tag SCREEN_BALANCE. Get the response back with the balance on the
      * receive method of this class
      */
     private void getBalance() {
         // Send a message to server to make the transference
         Data data = new Data();
         data.setAccountAux(this.theUser);
-        data.setProtocolTag(ProtocolTag.BALANCE);
+        data.setProtocolTag(ProtocolTag.SCREEN_BALANCE);
         Address memberOfBank = this.channel.getView().getMembers().get(0);
         Message message = new Message(memberOfBank, data);
         try {
@@ -326,13 +326,13 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
     /**
      * Send a message to receive method of ServerBank class with the
-     * tag EXTRACT. Get the response back with the balance on the
+     * tag SCREEN_EXTRACT. Get the response back with the balance on the
      * receive method of this class
      */
     private void extract() {
         Data data = new Data();
         data.setAccountAux(this.theUser);
-        data.setProtocolTag(ProtocolTag.EXTRACT);
+        data.setProtocolTag(ProtocolTag.SCREEN_EXTRACT);
         Address memberOfBank = this.channel.getView().getMembers().get(0);
         Message message = new Message(memberOfBank, data);
         try {
@@ -352,18 +352,18 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         Account accountReceive = data.getAccountAux();
 
         switch (data.getProtocolTag()) {
-            case TRANSFER:
+            case SCREEN_TRANSFER:
                 /**
-                 * If the received protocol tag in the message is TRANSFER,
+                 * If the received protocol tag in the message is SCREEN_TRANSFER,
                  * set the statusLabel text with the string that correspond with the
                  * alert tag of the account received in the message
                  */
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
                 this.statusLabel.setVisible(true);
                 break;
-            case LOGIN:
+            case SCREEN_LOGIN:
                 /**
-                 * If the received protocol tag in the message is LOGIN,
+                 * If the received protocol tag in the message is SCREEN_LOGIN,
                  * check if the message alert tag is LOGIN_SUCCESSFUL, if is it, set
                  * the global variable theUser with the account received in the message
                  * and show the main menu to this user
@@ -380,9 +380,9 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                 }
 
                 break;
-            case BALANCE:
+            case SCREEN_BALANCE:
                 /**
-                 * If the received protocol tag in the message is BALANCE,
+                 * If the received protocol tag in the message is SCREEN_BALANCE,
                  * set the headerLabel text with the balance of this user.
                  *
                  * The data.getText() contains the balance string
@@ -398,9 +398,9 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                 this.controlPanel.add(menu);
                 this.mainFrame.setVisible(true);
                 break;
-            case EXTRACT:
+            case SCREEN_EXTRACT:
                 /**
-                 * If the received protocol tag in the message is EXTRACT,
+                 * If the received protocol tag in the message is SCREEN_EXTRACT,
                  * set the textArea below with the extract of this user
                  */
                 this.headerLabel.setText("Meu extrato");
@@ -421,7 +421,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                 this.controlPanel.add(menu);
                 this.mainFrame.setVisible(true);
                 break;
-            case SINGUP:
+            case SCREEN_SINGUP:
                 /**
                  * If the received protocol tag in the message is SIGNUP,
                  * check if the messageAlertTag in the receivedAccount of the message
@@ -440,9 +440,9 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                     this.showMenu();
                 }
                 break;
-            case TO_STRING_SERVER:
+            case SCREEN_TO_STRING_SERVER:
                 /**
-                 * If the received protocol tag in the message is TO_STRING_SERVER,
+                 * If the received protocol tag in the message is SCREEN_TO_STRING_SERVER,
                  * set the statusLabel below with the total bank amount of cash
                  */
                 this.toStringServer = data.getText();

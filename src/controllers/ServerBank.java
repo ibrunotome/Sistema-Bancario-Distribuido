@@ -167,9 +167,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         //System.out.println("\n\nRecebida: \n "+data.toString());
 
         switch (data.getProtocolTag()) {
-            case TRANSFER:
+            case SCREEN_TRANSFER:
                 /**
-                 * If the received protocol tag in the message is TRANSFER,
+                 * If the received protocol tag in the message is SCREEN_TRANSFER,
                  * try to make a transference between the to accounts passed to
                  * the data object and send this object back to UserScreen
                  */
@@ -183,9 +183,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     e.printStackTrace();
                 }
                 break;
-            case LOGIN:
+            case SCREEN_LOGIN:
                 /**
-                 * If the received protocol tag in the message is LOGIN,
+                 * If the received protocol tag in the message is SCREEN_LOGIN,
                  * try to make the login with the to accounts passed by parameter
                  * and send the data object back to User Screen with and account
                  * containing the alert tag with the message if the login was successful or not
@@ -200,9 +200,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     e.printStackTrace();
                 }
                 break;
-            case BALANCE:
+            case SCREEN_BALANCE:
                 /**
-                 * If the received protocol tag in the message is BALANCE,
+                 * If the received protocol tag in the message is SCREEN_BALANCE,
                  * send the data object back to the UserScreen with the balance text
                  */
                 String balance = this.getBalance(accountReceived);
@@ -214,9 +214,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     e.printStackTrace();
                 }
                 break;
-            case EXTRACT:
+            case SCREEN_EXTRACT:
                 /**
-                 * If the received protocol tag in the message is EXTRACT,
+                 * If the received protocol tag in the message is SCREEN_EXTRACT,
                  * send the data object back to the UserScreen with the extract text
                  */
                 String extract = this.getExtract(accountReceived);
@@ -228,7 +228,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     e.printStackTrace();
                 }
                 break;
-            case SINGUP:
+            case SCREEN_SINGUP:
                 /**
                  * If the received protocol tag in the message is SIGNUP,
                  * try to make create a new Account with signUp method, and send
@@ -247,9 +247,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     e.printStackTrace();
                 }
                 break;
-            case TO_STRING_SERVER:
+            case SCREEN_TO_STRING_SERVER:
                 /**
-                 * If the received protocol tag in the message is TO_STRING_SERVER,
+                 * If the received protocol tag in the message is SCREEN_TO_STRING_SERVER,
                  * send the data object back to the UserScreen with the total bank amount of cash text
                  */
                 data.setText(this.toString());
@@ -288,6 +288,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
             Thread.sleep(100);
         }
         this.channelScreen.close();
+        this.channelBank.close();
     }
 
     public static void main(String args[]) throws Exception {
