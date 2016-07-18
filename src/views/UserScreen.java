@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serializable;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.jgroups.Message.*;
 
@@ -112,7 +113,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         // Set the protocol tag to receive method of ServerBank class work on it
         Data data = new Data();
         data.setProtocolTag(ProtocolTag.SCREEN_TO_STRING_SERVER);
-        Address memberOfBank = this.channel.getView().getMembers().get(0);
+        Address memberOfBank = this.chooseAddress();
 
         /**
          * Send a message to the channel, ServerBank will send back the
@@ -163,7 +164,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
              * and the account that will be used to try to login  in the system and get the
              * response back on the receive method of this class
              */
-            Address memberOfBank = this.channel.getView().getMembers().get(0);
+            Address memberOfBank = this.chooseAddress();
             Message request = new Message(memberOfBank, data);
 
 
@@ -220,7 +221,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
              * response back into the receive method in this class
              */
 
-            Address memberOfBank = this.channel.getView().getMembers().get(0);
+            Address memberOfBank = this.chooseAddress();
 
             Data data = new Data();
             data.setAccountAux(accountAux);
@@ -277,7 +278,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
              */
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
-            Address memberOfBank = this.channel.getView().getMembers().get(0);
+            Address memberOfBank = this.chooseAddress();
             Message message = new Message(memberOfBank, data);
             message.setFlag(Flag.RSVP);
             try {
@@ -315,7 +316,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         Data data = new Data();
         data.setAccountAux(this.theUser);
         data.setProtocolTag(ProtocolTag.SCREEN_BALANCE);
-        Address memberOfBank = this.channel.getView().getMembers().get(0);
+        Address memberOfBank = this.chooseAddress();
         Message message = new Message(memberOfBank, data);
         try {
             this.channel.send(message);
@@ -333,13 +334,43 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         Data data = new Data();
         data.setAccountAux(this.theUser);
         data.setProtocolTag(ProtocolTag.SCREEN_EXTRACT);
-        Address memberOfBank = this.channel.getView().getMembers().get(0);
+        Address memberOfBank = this.chooseAddress();
         Message message = new Message(memberOfBank, data);
         try {
             this.channel.send(message);
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+    }
+
+    /**
+     * choose a randomic address from the members of the channel
+     * and return the choosenOne.
+     * @param
+     */
+    private Address chooseAddress (){
+        Address chosenOne = this.channel.getView().getMembers().get(0);
+
+        boolean flag = false;
+
+        int choosen = 0;
+        int totalMembers = this.channel.getView().getMembers().size();
+
+        System.out.println("dsfafdsf"+this.channel.getView().getMembers().toString());
+
+        if((totalMembers > 2)&&(flag == false)){
+            /**
+             * A view list last position member is always me!!!???
+             */
+            while(choosen != (totalMembers - 1)) {
+                choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
+            }
+            chosenOne = this.channel.getView().getMembers().get(choosen);
+            if (!(this.channel.getView().getMembers().getClass().isInstance(UserScreen))){
+                flag = true;
+            }
+        }
+        return chosenOne;
     }
 
     @Override
@@ -481,5 +512,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         // Use this property because an error reporting the unavailability of IPV6
         System.setProperty("java.net.preferIPv4Stack", "true");
         UserScreen screen = new UserScreen();
+
     }
 }

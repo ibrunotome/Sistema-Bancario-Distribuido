@@ -148,6 +148,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     }
 
 
+
     /**
      * This method receive the messages from the group and make a
      * switch of the protocol tag of the message and do the corresponding action
