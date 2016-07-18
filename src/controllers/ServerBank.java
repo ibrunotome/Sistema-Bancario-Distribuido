@@ -23,9 +23,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     private Bank BCBank = new Bank();
     private JChannel channelScreen;
     private JChannel channelBank;
-    public boolean CONTINUE = true;
 
-    public ServerBank() throws Exception {
+    private ServerBank() throws Exception {
         this.start();
     }
 
@@ -34,10 +33,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * return this account with the alert tag LOGIN_SUCCESSFUL for the UserScreen receive method
      * or return with the alert tag LOGIN_ERROR if there is not
      *
-     * @param a
+     * @param a Account that will try to login
      * @return Account
      */
-    public Account login(Account a) {
+    private Account login(Account a) {
         Account accountAux = this.BCBank.getAllAccounts().get(a.getAccountNumber());
         if (accountAux != null && accountAux.getPassword().equals(a.getPassword())) {
             accountAux.setAlertTag(MessageAlertTag.LOGIN_SUCCESSFUL);
@@ -54,11 +53,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * if there is no logical errors, returning the corresponding
      * alert tags of each cause
      *
-     * @param byUser
-     * @param toUser
-     * @param amount
+     * @param byUser Account will make the transference
+     * @param toUser Account will receive the transference
+     * @param amount Amount to transfer
      */
-    public MessageAlertTag transference(Account byUser, int toUser, Double amount) {
+    private MessageAlertTag transference(Account byUser, int toUser, Double amount) {
         Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
         byUser = this.BCBank.getAllAccounts().get(byUser.getAccountNumber());
 
@@ -103,11 +102,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * return alert tag SIGNUP_SUCCESSFUL if there isn't, or SIGNUP_ERROR
      * if the account already exist
      *
-     * @param newUser
+     * @param newUser Account that will try to signup
      * @return MessageAlertTag
      */
 
-    public MessageAlertTag signUp(Account newUser) {
+    private MessageAlertTag signUp(Account newUser) {
 
         if (this.BCBank.getAllAccounts().get(newUser.getAccountNumber()) == null) {
             this.BCBank.addAccount(newUser);
@@ -120,20 +119,20 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     /**
      * Get the balance of an account
      *
-     * @param a
+     * @param a Account to get the balance
      * @return String
      */
-    public String getBalance(Account a) {
+    private String getBalance(Account a) {
         return this.BCBank.getBalance(a);
     }
 
     /**
      * Get the extract of an account
      *
-     * @param a
+     * @param a Account to add the extract
      * @return String
      */
-    public String getExtract(Account a) {
+    private String getExtract(Account a) {
         this.BCBank.getAllAccounts().get(a.getAccountNumber());
         return a.getExtractToString();
     }
@@ -141,7 +140,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     /**
      * Sum the total cash of the bank
      *
-     * @return
+     * @return String with the total bank cash
      */
     @Override
     public String toString() {
@@ -149,10 +148,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     }
 
     /**
-     * choose a randomic address from the members of the channel
+     * Choose a randomic address from the members of the channel
      * and return the choosenOne.
-     *
-     * @param
      */
     private Address chooseAddress() {
         Address chosenOne = this.channelBank.getView().getMembers().get(0);
@@ -164,11 +161,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
         System.out.println("dsfafdsf" + this.channelBank.getView().getMembers().toString());
 
-        if ((totalMembers > 2) && (flag == false)) {
-            /**
-             * A view list last position member is always me!!!???
+        if ((totalMembers > 2) && (!flag)) {
+            /*
+              A view list last position member is always me!!!???
              */
-            while (choosen != (totalMembers - 1) && (flag == false)) {
+            while (choosen != (totalMembers - 1) && (!flag)) {
                 choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
                 chosenOne = this.channelBank.getView().getMembers().get(choosen);
                 if (!(this.channelBank.getView().getMembers().getClass().isInstance(this))) {
@@ -185,7 +182,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * This method receive the messages from the group and make a
      * switch of the protocol tag of the message and do the corresponding action
      *
-     * @param message
+     * @param message Message sended from Jchannel
      */
     public void receive(Message message) {
 
@@ -201,10 +198,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
         switch (data.getProtocolTag()) {
             case SCREEN_TRANSFER:
-                /**
-                 * If the received protocol tag in the message is SCREEN_TRANSFER,
-                 * try to make a transference between the to accounts passed to
-                 * the data object and send this object back to UserScreen
+                /*
+                  If the received protocol tag in the message is SCREEN_TRANSFER,
+                  try to make a transference between the to accounts passed to
+                  the data object and send this object back to UserScreen
                  */
                 data.setProtocolTag(ProtocolTag.SERVER_TRANSFER);
                 data.setSender(sender);
@@ -227,11 +224,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SCREEN_LOGIN:
-                /**
-                 * If the received protocol tag in the message is SCREEN_LOGIN,
-                 * try to make the login with the to accounts passed by parameter
-                 * and send the data object back to User Screen with and account
-                 * containing the alert tag with the message if the login was successful or not
+                /*
+                  If the received protocol tag in the message is SCREEN_LOGIN,
+                  try to make the login with the to accounts passed by parameter
+                  and send the data object back to User Screen with and account
+                  containing the alert tag with the message if the login was successful or not
                  */
                 accountReceived = this.login(accountReceived);
                 data.setAccountAux(accountReceived);
@@ -244,9 +241,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SCREEN_BALANCE:
-                /**
-                 * If the received protocol tag in the message is SCREEN_BALANCE,
-                 * send the data object back to the UserScreen with the balance text
+                /*
+                  If the received protocol tag in the message is SCREEN_BALANCE,
+                  send the data object back to the UserScreen with the balance text
                  */
                 String balance = this.getBalance(accountReceived);
                 data.setText(balance);
@@ -258,9 +255,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SCREEN_EXTRACT:
-                /**
-                 * If the received protocol tag in the message is SCREEN_EXTRACT,
-                 * send the data object back to the UserScreen with the extract text
+                /*
+                  If the received protocol tag in the message is SCREEN_EXTRACT,
+                  send the data object back to the UserScreen with the extract text
                  */
                 String extract = this.getExtract(accountReceived);
                 data.setText(extract);
@@ -272,11 +269,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SCREEN_SINGUP:
-                /**
-                 * If the received protocol tag in the message is SIGNUP,
-                 * try to make create a new Account with signUp method, and send
-                 * a message back for the UserScreen with the received account
-                 * that contains the alert tag saying if the signup was successful or not
+                /*
+                  If the received protocol tag in the message is SIGNUP,
+                  try to make create a new Account with signUp method, and send
+                  a message back for the UserScreen with the received account
+                  that contains the alert tag saying if the signup was successful or not
                  */
                 MessageAlertTag signupTag = this.signUp(accountReceived);
                 accountReceived.setAlertTag(signupTag);
@@ -291,9 +288,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SCREEN_TO_STRING_SERVER:
-                /**
-                 * If the received protocol tag in the message is SCREEN_TO_STRING_SERVER,
-                 * send the data object back to the UserScreen with the total bank amount of cash text
+                /*
+                  If the received protocol tag in the message is SCREEN_TO_STRING_SERVER,
+                  send the data object back to the UserScreen with the total bank amount of cash text
                  */
                 data.setText(this.toString());
                 respond = new Message(sender, data);
@@ -326,7 +323,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * Instantiate the channelScreen, set the xml with the configs,
      * set this class as receiver, connect to the BCBankGroup
      *
-     * @throws Exception
+     * @throws Exception of channel methods
      */
     private void start() throws Exception {
         // channel Screem cluster
@@ -341,6 +338,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         this.channelBank.setReceiver(this);
         this.channelBank.connect("BCBankGroup");
 
+        boolean CONTINUE = true;
+
         while (CONTINUE) {
             Thread.sleep(100);
         }
@@ -351,6 +350,6 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     public static void main(String args[]) throws Exception {
         // Use this property because an error reporting the unavailability of IPV6
         System.setProperty("java.net.preferIPv4Stack", "true");
-        ServerBank server = new ServerBank();
+        new ServerBank();
     }
 }

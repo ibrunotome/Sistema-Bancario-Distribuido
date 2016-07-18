@@ -30,7 +30,6 @@ import static org.jgroups.Message.*;
 @SuppressWarnings("deprecation")
 public class UserScreen extends ReceiverAdapter implements Serializable {
 
-    public boolean CONTINUE = true;
     private Account theUser = new Account();
     private JChannel channel;
     private String toStringServer = "";
@@ -40,7 +39,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     private JLabel statusLabel;
     private JPanel controlPanel;
 
-    public UserScreen() throws Exception {
+    private UserScreen() throws Exception {
         this.prepareGUI();
         this.login();
         this.start();
@@ -50,7 +49,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * Prepare the initial GUI, set the mainFrame that will be used
      * for put any other kind of graphic element
      */
-    public void prepareGUI() {
+    private void prepareGUI() {
         this.mainFrame = new JFrame("BCBank");
         this.mainFrame.setSize(400, 500);
         this.mainFrame.setLayout(new GridLayout(3, 1));
@@ -115,10 +114,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         data.setProtocolTag(ProtocolTag.SCREEN_TO_STRING_SERVER);
         Address memberOfBank = this.chooseAddress();
 
-        /**
-         * Send a message to the channel, ServerBank will send back the
-         * total amount of cash in the bank and this message will be
-         * displayed in a label on the main menu
+        /*
+          Send a message to the channel, ServerBank will send back the
+          total amount of cash in the bank and this message will be
+          displayed in a label on the main menu
          */
         Message request = new Message(memberOfBank, data);
         try {
@@ -141,7 +140,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * to receive method in the ServerBank class with the tag SCREEN_LOGIN,
      * trying to login into the system
      */
-    public void login() {
+    private void login() {
         this.headerLabel.setText("Digite o número da conta e senha para login");
         JLabel namelabel = new JLabel("Nº Conta: ", JLabel.LEFT);
         JLabel passwordLabel = new JLabel("     Senha: ", JLabel.LEFT);
@@ -159,10 +158,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             Data data = new Data();
             data.setProtocolTag(ProtocolTag.SCREEN_LOGIN);
             data.setAccountAux(accountAux);
-            /**
-             * Send a message to the receive method in the ServerBank class with the tag SCREEN_LOGIN
-             * and the account that will be used to try to login  in the system and get the
-             * response back on the receive method of this class
+            /*
+              Send a message to the receive method in the ServerBank class with the tag SCREEN_LOGIN
+              and the account that will be used to try to login  in the system and get the
+              response back on the receive method of this class
              */
             Address memberOfBank = this.chooseAddress();
             Message request = new Message(memberOfBank, data);
@@ -215,10 +214,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             accountAux.setPassword(password.getText());
             accountAux.setBalance(Double.parseDouble(amount.getText()));
 
-            /**
-             * Send a message to reveive method on the ServerBank class with the
-             * tag SIGNUP to try to make a new Account in the system and get the
-             * response back into the receive method in this class
+            /*
+              Send a message to reveive method on the ServerBank class with the
+              tag SIGNUP to try to make a new Account in the system and get the
+              response back into the receive method in this class
              */
 
             Address memberOfBank = this.chooseAddress();
@@ -271,10 +270,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
         JButton transferButton = new JButton("Transferir");
         transferButton.addActionListener(e -> {
-            /**
-             * Send a message to receive method on ServerBank class, using the
-             * SCREEN_TRANSFER tag to make the transference and get the response back on
-             * receive method of this class
+            /*
+              Send a message to receive method on ServerBank class, using the
+              SCREEN_TRANSFER tag to make the transference and get the response back on
+              receive method of this class
              */
             Data data = new Data(this.theUser, Integer.parseInt(toAccount.getText()), Double.parseDouble(amount.getText()));
             data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
@@ -346,8 +345,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     /**
      * choose a randomic address from the members of the channel
      * and return the choosenOne.
-     *
-     * @param
      */
     private Address chooseAddress() {
         Address chosenOne = this.channel.getView().getMembers().get(0);
@@ -359,19 +356,19 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
         System.out.println("dsfafdsf" + this.channel.getView().getMembers().toString());
 
-        if ((totalMembers > 2) && (flag == false)) {
-            /**
-             * A view list last position member is always me!!!???
+        if ((totalMembers > 2) && (!flag)) {
+            /*
+              A view list last position member is always me!!!???
              */
-            while (choosen != (totalMembers - 1) && (flag == false)) {
+            while (choosen != (totalMembers - 1) && (!flag)) {
                 choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
                 chosenOne = this.channel.getView().getMembers().get(choosen);
                 if (!(this.channel.getView().getMembers().getClass().isInstance(this))) {
                     flag = true;
                 }
             }
-
         }
+
         return chosenOne;
     }
 
@@ -386,20 +383,20 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
         switch (data.getProtocolTag()) {
             case SCREEN_TRANSFER:
-                /**
-                 * If the received protocol tag in the message is SCREEN_TRANSFER,
-                 * set the statusLabel text with the string that correspond with the
-                 * alert tag of the account received in the message
+                /*
+                  If the received protocol tag in the message is SCREEN_TRANSFER,
+                  set the statusLabel text with the string that correspond with the
+                  alert tag of the account received in the message
                  */
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
                 this.statusLabel.setVisible(true);
                 break;
             case SCREEN_LOGIN:
-                /**
-                 * If the received protocol tag in the message is SCREEN_LOGIN,
-                 * check if the message alert tag is LOGIN_SUCCESSFUL, if is it, set
-                 * the global variable theUser with the account received in the message
-                 * and show the main menu to this user
+                /*
+                  If the received protocol tag in the message is SCREEN_LOGIN,
+                  check if the message alert tag is LOGIN_SUCCESSFUL, if is it, set
+                  the global variable theUser with the account received in the message
+                  and show the main menu to this user
                  */
 
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
@@ -414,11 +411,11 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
                 break;
             case SCREEN_BALANCE:
-                /**
-                 * If the received protocol tag in the message is SCREEN_BALANCE,
-                 * set the headerLabel text with the balance of this user.
-                 *
-                 * The data.getText() contains the balance string
+                /*
+                  If the received protocol tag in the message is SCREEN_BALANCE,
+                  set the headerLabel text with the balance of this user.
+
+                  The data.getText() contains the balance string
                  */
                 this.headerLabel.setText(data.getText());
                 JButton menu = new JButton("Menu");
@@ -432,9 +429,9 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                 this.mainFrame.setVisible(true);
                 break;
             case SCREEN_EXTRACT:
-                /**
-                 * If the received protocol tag in the message is SCREEN_EXTRACT,
-                 * set the textArea below with the extract of this user
+                /*
+                  If the received protocol tag in the message is SCREEN_EXTRACT,
+                  set the textArea below with the extract of this user
                  */
                 this.headerLabel.setText("Meu extrato");
                 JTextArea textArea = new JTextArea(7, 30);
@@ -455,10 +452,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                 this.mainFrame.setVisible(true);
                 break;
             case SCREEN_SINGUP:
-                /**
-                 * If the received protocol tag in the message is SIGNUP,
-                 * check if the messageAlertTag in the receivedAccount of the message
-                 * have the tag SIGNUP_SUCCESSFUL and show the main menu if is it
+                /*
+                  If the received protocol tag in the message is SIGNUP,
+                  check if the messageAlertTag in the receivedAccount of the message
+                  have the tag SIGNUP_SUCCESSFUL and show the main menu if is it
                  */
                 MessageAlertTag messageAlertTag;
                 messageAlertTag = accountReceive.getAlertTag();
@@ -474,9 +471,9 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SCREEN_TO_STRING_SERVER:
-                /**
-                 * If the received protocol tag in the message is SCREEN_TO_STRING_SERVER,
-                 * set the statusLabel below with the total bank amount of cash
+                /*
+                  If the received protocol tag in the message is SCREEN_TO_STRING_SERVER,
+                  set the statusLabel below with the total bank amount of cash
                  */
                 this.toStringServer = data.getText();
                 this.statusLabel.setText(this.toStringServer);
@@ -498,6 +495,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         this.channel.setDiscardOwnMessages(true);
         this.channel.setReceiver(this);
         this.channel.connect("BCBScreenGroup");
+        boolean CONTINUE = true;
         while (CONTINUE) {
             Thread.sleep(100);
         }
@@ -511,7 +509,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * @throws Exception
      */
     public static void main(String args[]) throws Exception {
-        // Use this property because an error reporting the unavailability of IPV6
         System.setProperty("java.net.preferIPv4Stack", "true");
         UserScreen screen = new UserScreen();
 

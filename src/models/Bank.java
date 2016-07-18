@@ -14,8 +14,6 @@ import java.util.Hashtable;
  */
 @SuppressWarnings("unchecked")
 public class Bank extends ReceiverAdapter implements Serializable {
-    private final Double totalCash = 10000.0;
-    private final int totalAccounts = 10;
     private Hashtable<Integer, Account> allAccounts = new Hashtable();
 
     public Bank() throws Exception {
@@ -32,12 +30,14 @@ public class Bank extends ReceiverAdapter implements Serializable {
             this.loadState();
         } else {
             System.out.println("Banco inexistente, criando banco inicial");
-            for (int i = 0; i < this.totalAccounts; i++) {
+            int totalAccounts = 10;
+            for (int i = 0; i < totalAccounts; i++) {
                 Account a = new Account();
                 a.setAccountNumber(i);
                 a.setName("user" + i);
                 a.setPassword("pass" + i);
-                a.setBalance(this.totalCash / this.totalAccounts);
+                Double totalCash = 10000.0;
+                a.setBalance(totalCash / totalAccounts);
                 a.addToExtract("\n----------------------------\nDEPÓSITO\n"
                         + "----------------------------\nValor: R$ " + a.getBalance() + "\nMeu novo saldo: R$ "
                         + (a.getBalance()) + "\n----------------------------\n");
@@ -83,9 +83,9 @@ public class Bank extends ReceiverAdapter implements Serializable {
     /**
      * Transfer an amount of cash between two accounts
      *
-     * @param a1
-     * @param a2
-     * @param amount
+     * @param a1 Account will make the transference
+     * @param a2 Account will receive the transference
+     * @param amount Amount to transfer
      */
     public void transference(Account a1, Account a2, Double amount) {
         a1 = this.allAccounts.get(a1.getAccountNumber());
@@ -100,7 +100,7 @@ public class Bank extends ReceiverAdapter implements Serializable {
     /**
      * Get the balance of an account
      *
-     * @param a
+     * @param a Account to get the balance
      * @return String
      */
     public String getBalance(Account a) {
@@ -111,7 +111,7 @@ public class Bank extends ReceiverAdapter implements Serializable {
     /**
      * Add an account to allAccounts
      *
-     * @param a
+     * @param a Account to add the extract
      */
     public void addAccount(Account a) {
         a.addToExtract("\n----------------------------\nDEPÓSITO\n"
@@ -132,7 +132,7 @@ public class Bank extends ReceiverAdapter implements Serializable {
     /**
      * Set the hashtable allAccounts
      *
-     * @param allAccounts
+     * @param allAccounts All accounts of the bank
      */
     public void setAllAccounts(Hashtable<Integer, Account> allAccounts) {
         this.allAccounts = allAccounts;
