@@ -8,6 +8,7 @@ import org.jgroups.ReceiverAdapter;
 
 import java.io.Serializable;
 import java.util.Hashtable;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Controller that makes the comunications between the UserScreen view
@@ -147,6 +148,37 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         return this.BCBank.sumBankCash();
     }
 
+    /**
+     * choose a randomic address from the members of the channel
+     * and return the choosenOne.
+     *
+     * @param
+     */
+    private Address chooseAddress() {
+        Address chosenOne = this.channelBank.getView().getMembers().get(0);
+
+        boolean flag = false;
+
+        int choosen = 0;
+        int totalMembers = this.channelBank.getView().getMembers().size();
+
+        System.out.println("dsfafdsf" + this.channelBank.getView().getMembers().toString());
+
+        if ((totalMembers > 2) && (flag == false)) {
+            /**
+             * A view list last position member is always me!!!???
+             */
+            while (choosen != (totalMembers - 1) && (flag == false)) {
+                choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
+                chosenOne = this.channelBank.getView().getMembers().get(choosen);
+                if (!(this.channelBank.getView().getMembers().getClass().isInstance(this))) {
+                    flag = true;
+                }
+            }
+
+        }
+        return chosenOne;
+    }
 
 
     /**
@@ -174,6 +206,16 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  * try to make a transference between the to accounts passed to
                  * the data object and send this object back to UserScreen
                  */
+                data.setProtocolTag(ProtocolTag.SERVER_TRANSFER);
+                data.setSender(sender);
+                message = new Message(null,data);
+                message.setFlag(Message.Flag.RSVP);
+                try {
+                    this.channelBank.send(message);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+
                 MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
                 accountReceived.setAlertTag(transferenceTag);
                 data.setAccountAux(accountReceived);
@@ -260,6 +302,20 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
+            case SERVER_TRANSFER:
+                transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
+                if(sender == this.channelBank.getAddress()){
+                    accountReceived.setAlertTag(transferenceTag);
+                    data.setAccountAux(accountReceived);
+                    respond = new Message(data.getSender(), data);
+                    try {
+                        this.channelScreen.send(respond);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 break;
             default:
                 break;

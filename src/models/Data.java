@@ -1,5 +1,8 @@
 package models;
 
+import org.jgroups.Address;
+import org.jgroups.stack.AddressGenerator;
+
 import java.io.Serializable;
 
 /**
@@ -15,6 +18,7 @@ public class Data implements Serializable {
     private Double amount;
     private ProtocolTag protocolTag;
     private String text;
+    private Address sender;
 
 
     public Data() {
@@ -68,6 +72,15 @@ public class Data implements Serializable {
     public void setText(String text) {
         this.text = text;
     }
+
+    public Address getSender() {
+        return sender;
+    }
+
+    public void setSender(Address sender) {
+        this.sender = sender;
+    }
+
 
     public String toString () {
         String line = " ";
