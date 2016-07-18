@@ -346,9 +346,10 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     /**
      * choose a randomic address from the members of the channel
      * and return the choosenOne.
+     *
      * @param
      */
-    private Address chooseAddress (){
+    private Address chooseAddress() {
         Address chosenOne = this.channel.getView().getMembers().get(0);
 
         boolean flag = false;
@@ -356,19 +357,20 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         int choosen = 0;
         int totalMembers = this.channel.getView().getMembers().size();
 
-        System.out.println("dsfafdsf"+this.channel.getView().getMembers().toString());
+        System.out.println("dsfafdsf" + this.channel.getView().getMembers().toString());
 
-        if((totalMembers > 2)&&(flag == false)){
+        if ((totalMembers > 2) && (flag == false)) {
             /**
              * A view list last position member is always me!!!???
              */
-            while(choosen != (totalMembers - 1)) {
+            while (choosen != (totalMembers - 1) && (flag == false)) {
                 choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
+                chosenOne = this.channel.getView().getMembers().get(choosen);
+                if (!(this.channel.getView().getMembers().getClass().isInstance(this))) {
+                    flag = true;
+                }
             }
-            chosenOne = this.channel.getView().getMembers().get(choosen);
-            if (!(this.channel.getView().getMembers().getClass().isInstance(UserScreen))){
-                flag = true;
-            }
+
         }
         return chosenOne;
     }
