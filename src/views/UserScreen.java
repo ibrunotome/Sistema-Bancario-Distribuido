@@ -349,6 +349,8 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     private Address chooseAddress() {
         Address chosenOne = this.channel.getView().getMembers().get(0);
 
+        System.out.println("vaca0 :"+chosenOne.toString());
+
         boolean flag = false;
 
         int choosen = 0;
@@ -368,6 +370,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                 }
             }
         }
+        System.out.println("vacaFIM :"+chosenOne.toString());
 
         return chosenOne;
     }
@@ -510,7 +513,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      */
     public static void main(String args[]) throws Exception {
         System.setProperty("java.net.preferIPv4Stack", "true");
-        UserScreen screen = new UserScreen();
+        new UserScreen();
 
     }
 }
