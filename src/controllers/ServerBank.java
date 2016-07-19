@@ -1,10 +1,7 @@
 package controllers;
 
 import models.*;
-import org.jgroups.Address;
-import org.jgroups.JChannel;
-import org.jgroups.Message;
-import org.jgroups.ReceiverAdapter;
+import org.jgroups.*;
 
 import java.io.Serializable;
 import java.util.Hashtable;
@@ -24,7 +21,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     private JChannel channelScreen;
     private JChannel channelBank;
 
-    private ServerBank() throws Exception {
+    public ServerBank() throws Exception {
         this.start();
     }
 
@@ -186,8 +183,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     public void receive(Message message) {
 
-        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): "+message.toString());
-        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
+        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): " + message.toString());
+        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): " + (message.getObject()).toString());
 
         Address sender = message.getSrc();
 
@@ -206,10 +203,14 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 System.out.println("entreiSCEEN");
                 data.setProtocolTag(ProtocolTag.SERVER_TRANSFER);
                 data.setSender(sender);
-                message = new Message(null,data);
+                message = new Message(null, data);
                 message.setFlag(Message.Flag.RSVP);
+
                 try {
                     this.channelBank.send(message);
+                } catch (TimeoutException te) {
+                    System.out.println("Teste" + te.toString());
+                // e1.printStackTrace();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -296,7 +297,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 System.out.println("entrei");
                 data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
                 MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
-                if(sender == this.channelBank.getAddress()){
+                if (sender == this.channelBank.getAddress()) {
                     accountReceived.setAlertTag(transferenceTag);
                     data.setAccountAux(accountReceived);
                     respond = new Message(data.getSender(), data);

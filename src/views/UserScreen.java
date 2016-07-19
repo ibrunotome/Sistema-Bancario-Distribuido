@@ -39,7 +39,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     private JLabel statusLabel;
     private JPanel controlPanel;
 
-    private UserScreen() throws Exception {
+    public UserScreen() throws Exception {
         this.prepareGUI();
         this.login();
         this.start();
