@@ -347,9 +347,9 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * and return the choosenOne.
      */
     private Address chooseAddress() {
-        Address chosenOne = this.channel.getView().getMembers().get(0);
+        Address chosenOne = null;
 
-        System.out.println("vaca0 :"+chosenOne.toString());
+        System.out.println("vaca0 :"+this.channel.getAddress().toString());
 
         boolean flag = false;
 
@@ -357,20 +357,23 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         int totalMembers = this.channel.getView().getMembers().size();
 
         System.out.println("dsfafdsf" + this.channel.getView().getMembers().toString());
+         System.out.println("eu: "+this.channel.getView().getCreator());
 
         if ((totalMembers > 2) && (!flag)) {
             /*
               A view list last position member is always me!!!???
              */
-            while (choosen != (totalMembers - 1) && (!flag)) {
+            while ((chosenOne != this.channel.getAddress())&& (!flag)) {
                 choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
                 chosenOne = this.channel.getView().getMembers().get(choosen);
-                if (!(this.channel.getView().getMembers().getClass().isInstance(this))) {
-                    flag = true;
-                }
+                //if (!(this.channel.getView().getMembers().getClass().isInstance(this))) {
+                  //  flag = true;
+                //}
             }
+        }else {
+            chosenOne = this.channel.getView().getMembers().get(choosen);
         }
-        System.out.println("vacaFIM :"+chosenOne.toString());
+//        System.out.println("vacaFIM :"+chosenOne.toString());
 
         return chosenOne;
     }

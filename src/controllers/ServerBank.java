@@ -186,8 +186,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     public void receive(Message message) {
 
-        //System.out.println("DEBUG: ServerBank.receive()=>message.toString(): "+message.toString());
-        //System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
+        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): "+message.toString());
+        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
 
         Address sender = message.getSrc();
 
@@ -203,6 +203,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                   try to make a transference between the to accounts passed to
                   the data object and send this object back to UserScreen
                  */
+                System.out.println("entreiSCEEN");
                 data.setProtocolTag(ProtocolTag.SERVER_TRANSFER);
                 data.setSender(sender);
                 message = new Message(null,data);
@@ -213,15 +214,6 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     e1.printStackTrace();
                 }
 
-                MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
-                accountReceived.setAlertTag(transferenceTag);
-                data.setAccountAux(accountReceived);
-                Message respond = new Message(sender, data);
-                try {
-                    this.channelScreen.send(respond);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 break;
             case SCREEN_LOGIN:
                 /*
@@ -232,7 +224,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 accountReceived = this.login(accountReceived);
                 data.setAccountAux(accountReceived);
-                respond = new Message(sender, data);
+                Message respond = new Message(sender, data);
 
                 try {
                     this.channelScreen.send(respond);   //envia mensagem unicast pro dst ou se for null, sera multicast
@@ -301,7 +293,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SERVER_TRANSFER:
-                transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
+                System.out.println("entrei");
+                data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
+                MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
                 if(sender == this.channelBank.getAddress()){
                     accountReceived.setAlertTag(transferenceTag);
                     data.setAccountAux(accountReceived);
@@ -334,7 +328,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
         // channel bank cluster
         this.channelBank = new JChannel("xml-configs/udp.xml");
-        this.channelBank.setDiscardOwnMessages(true);
+        this.channelBank.setDiscardOwnMessages(false);
         this.channelBank.setReceiver(this);
         this.channelBank.connect("BCBankGroup");
 
