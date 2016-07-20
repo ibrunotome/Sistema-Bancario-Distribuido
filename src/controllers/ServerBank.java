@@ -78,7 +78,6 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 allAccounts.replace(byUser.getAccountNumber(), byUser);
                 allAccounts.replace(toUserAux.getAccountNumber(), toUserAux);
                 this.BCBank.setAllAccounts(allAccounts);
-                System.out.println(this.BCBank.getAllAccounts().toString());
                 // Serialize the accounts after each transference
                 this.BCBank.saveState();
                 return MessageAlertTag.TRANSFER_SUCCESSFUL;
@@ -183,8 +182,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     public void receive(Message message) {
 
-        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): " + message.toString());
-        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): " + (message.getObject()).toString());
+//        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): " + message.toString());
+//        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): " + (message.getObject()).toString());
 
         Address sender = message.getSrc();
 
@@ -200,7 +199,6 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                   try to make a transference between the to accounts passed to
                   the data object and send this object back to UserScreen
                  */
-                System.out.println("entreiSCEEN");
                 data.setProtocolTag(ProtocolTag.SERVER_TRANSFER);
                 data.setSender(sender);
                 message = new Message(null, data);
@@ -208,11 +206,15 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
                 try {
                     this.channelBank.send(message);
-                } catch (TimeoutException te) {
-                    System.out.println("Teste" + te.toString());
-                // e1.printStackTrace();
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.TRANSFER_ERROR_TIMEOUT);
+                    message = new Message(sender, data);
+                    try {
+                        this.channelScreen.send(message);
+                    } catch (Exception e) {
+                        System.err.println("Falhou ao enviar mensagem");
+                    }
                 }
 
                 break;
@@ -294,7 +296,6 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SERVER_TRANSFER:
-                System.out.println("entrei");
                 data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
                 MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
                 if (sender == this.channelBank.getAddress()) {
@@ -308,6 +309,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     }
                 }
 
+                break;
+            case SERVER_LOGIN:
                 break;
             default:
                 break;
