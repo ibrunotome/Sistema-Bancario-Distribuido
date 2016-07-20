@@ -58,7 +58,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         Account toUserAux = this.BCBank.getAllAccounts().get(toUser);
         byUser = this.BCBank.getAllAccounts().get(byUser.getAccountNumber());
 
-        if (toUserAux != null && byUser.getAccountNumber() != toUserAux.getAccountNumber()) {
+        /*
+            If toUser exists and he is different from from byUser, try to make the transference
+         */
+        if (toUserAux != null && (byUser.getAccountNumber() != toUserAux.getAccountNumber())) {
             if (byUser.getBalance() >= amount && amount > 0) {
                 this.BCBank.transference(byUser, toUserAux, amount);
                 // Add a new transfer to extract of byUser
@@ -144,37 +147,6 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     }
 
     /**
-     * Choose a randomic address from the members of the channel
-     * and return the choosenOne.
-     */
-    private Address chooseAddress() {
-        Address chosenOne = this.channelBank.getView().getMembers().get(0);
-
-        boolean flag = false;
-
-        int choosen = 0;
-        int totalMembers = this.channelBank.getView().getMembers().size();
-
-        System.out.println("dsfafdsf" + this.channelBank.getView().getMembers().toString());
-
-        if ((totalMembers > 2) && (!flag)) {
-            /*
-              A view list last position member is always me!!!???
-             */
-            while (choosen != (totalMembers - 1) && (!flag)) {
-                choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
-                chosenOne = this.channelBank.getView().getMembers().get(choosen);
-                if (!(this.channelBank.getView().getMembers().getClass().isInstance(this))) {
-                    flag = true;
-                }
-            }
-
-        }
-        return chosenOne;
-    }
-
-
-    /**
      * This method receive the messages from the group and make a
      * switch of the protocol tag of the message and do the corresponding action
      *
@@ -189,6 +161,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
         Data data = (Data) message.getObject();
         Account accountReceived = data.getAccountAux();
+        System.out.println("\nTag: " + data.getProtocolTag());
+        System.out.println("\nBanco: " + sender);
+        System.out.println("\nTela: " + data.getSender());
 
         //System.out.println("\n\nRecebida: \n "+data.toString());
 
@@ -202,7 +177,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 data.setProtocolTag(ProtocolTag.SERVER_TRANSFER);
                 data.setSender(sender);
                 message = new Message(null, data);
-                message.setFlag(Message.Flag.RSVP);
+                message.setFlag(Message.Flag.RSVP, Message.Flag.OOB);
 
                 try {
                     this.channelBank.send(message);
@@ -296,6 +271,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SERVER_TRANSFER:
+                /*
+                  If the received protocol tag in the message is SERVER_TRANSFER,
+                  try to make the transference between the banks
+                 */
                 data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
                 MessageAlertTag transferenceTag = this.transference(accountReceived, data.getAccountNumberToTransfer(), data.getAmount());
                 if (sender == this.channelBank.getAddress()) {
@@ -324,13 +303,13 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * @throws Exception of channel methods
      */
     private void start() throws Exception {
-        // channel Screem cluster
+        // Channel Screen cluster
         this.channelScreen = new JChannel("xml-configs/udp.xml");
         this.channelScreen.setDiscardOwnMessages(true);
         this.channelScreen.setReceiver(this);
         this.channelScreen.connect("BCBScreenGroup");
 
-        // channel bank cluster
+        // Channel Bank cluster
         this.channelBank = new JChannel("xml-configs/udp.xml");
         this.channelBank.setDiscardOwnMessages(false);
         this.channelBank.setReceiver(this);

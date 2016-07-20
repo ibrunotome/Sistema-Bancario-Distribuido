@@ -349,26 +349,17 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     private Address chooseAddress() {
         Address chosenOne = this.channel.getView().getMembers().get(0);
 
-        System.out.println("vaca0 :" + this.channel.getAddress().toString());
-
-        boolean flag = false;
+        System.out.println("\nEu :" + this.channel.getAddress().toString());
 
         int choosen = 0;
         int totalMembers = this.channel.getView().getMembers().size();
 
-        System.out.println("dsfafdsf" + this.channel.getView().getMembers().toString());
-        System.out.println("eu: " + this.channel.getView().getCreator());
+        System.out.println("\nMembros: " + this.channel.getView().getMembers().toString());
 
-        if ((totalMembers > 2)) {
-            /*
-              A view list last position member is always me!!!???
-             */
+        if (totalMembers > 2) {
             while ((chosenOne == this.channel.getAddress())) {
                 choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
                 chosenOne = this.channel.getView().getMembers().get(choosen);
-                //if (!(this.channel.getView().getMembers().getClass().isInstance(this))) {
-                //  flag = true;
-                //}
                 System.out.println("entrei :" + chosenOne.toString());
             }
         } else {
