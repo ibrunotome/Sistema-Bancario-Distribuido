@@ -20,7 +20,6 @@ public class Data implements Serializable {
     private String text;
     private Address sender;
 
-
     public Data() {
 
     }
@@ -30,8 +29,6 @@ public class Data implements Serializable {
         this.accountNumberToTransfer = accountNumberToTransfer;
         this.amount = amount;
     }
-
-
 
     public ProtocolTag getProtocolTag() {
         return this.protocolTag;

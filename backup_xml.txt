@@ -1,6 +1,9 @@
 <config xmlns="urn:org:jgroups"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">
+    <!-- UDP uses IP multicast for sending messages to all members of a group and UDP datagrams
+        for unicast messages (sent to a single member). A protocol stack with UDP as transport protocol
+        is typically used with clusters whose members run in the same subnet. -->
     <UDP mcast_addr="${jgroups.udp.mcast_addr:239.9.9.9}"
          mcast_port="${jgroups.udp.mcast_port:45588}"
          tos="8"
@@ -34,13 +37,26 @@
          oob_thread_pool.max_threads="100"
          oob_thread_pool.keep_alive_time="5000"
          oob_thread_pool.rejection_policy="discard"/>
-    <SEQUENCER2/> <!-- Total order for multicast -->
-
-    <PING timeout="3000"/> <!-- GMS requisit -->
-    <MERGE3 max_interval="30000"
-            min_interval="10000"/> <!-- do nothing yet -->
-    <FD_ALL/> <!-- Failure detection -->
-    <VERIFY_SUSPECT timeout="1500"/> <!-- GMS requisit -->
+    <!-- SEQUENCER provider total order for multicast (=group) messages by forwarding messages
+        to the current coordinator, which then sends the messages to the cluster on behalf of the original sender.
+        Because it is always the same sender (whose messages are delivered in FIFO order), a global (or total) order is established.-->
+    <SEQUENCER2/>
+    <!-- Initial (dirty) discovery of members. Used to detect the coordinator (oldest member),
+        by mcasting PING requests to an IP multicast address. -->
+    <PING timeout="3000"/>
+    <!-- do nothing yet -->
+    <MERGE3 max_interval="3000"
+            min_interval="1000"/>
+    <!-- Similar to FD_ALL, but doesn't use any timestamps. Instead, a boolean flag is associated with each member
+        When a message or heartbeat (sent every interval ms) from P is received, P's flag is set to true.
+        The heartbeat checker checks every timeout ms for members whose flag is false, suspects those,
+        and - when done - resets all flags to false again. -->
+    <FD_ALL2 interval="3000"/>
+    <!-- Verifies that a suspected member is really dead by pinging that member one last time before excluding it,
+        and dropping the suspect message if the member does respond. -->
+    <VERIFY_SUSPECT timeout="1500"/>
+    <!-- Confiability requisit
+    NAKACK is a Lossless and FIFO delivery of multicast messages, using negative acks. -->
     <pbcast.NAKACK2 xmit_interval="500"
                     xmit_table_num_rows="100"
                     xmit_table_msgs_per_row="2000"
@@ -48,43 +64,41 @@
                     max_msg_batch_size="500"
                     use_mcast_xmit="false"
                     discard_delivered_msgs="true"/>
-    <!--
-    Confiability requisit
-    NAKACK is a Lossless and FIFO delivery of multicast messages, using negative acks.
-    -->
+    <!-- Unicast for balances responses for example UNICAST provides reliable delivery and
+        FIFO (= First In First Out) properties for point-to-point messages between one sender and one receiver. -->
     <UNICAST3 xmit_interval="500"
               xmit_table_num_rows="100"
               xmit_table_msgs_per_row="2000"
               xmit_table_max_compaction_time="60000"
               conn_expiry_timeout="0"
               max_msg_batch_size="500"/>
-    <!--
-    Unicast for balances responses for example
-    UNICAST provides reliable delivery and FIFO (= First In First Out) properties for point-to-point messages between
-    one sender and one receiver.
-    -->
+    <!-- To serve potential retransmission requests, a member has to store received messages until
+        it is known that every member in the cluster has received them.
+        Message stability for a given message M means that M has been seen by everyone in the cluster. -->
     <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
                    max_bytes="4M"/>
-    <!--
-    To serve potential retransmission requests, a member has to store received messages until it is known that every
-    member in the cluster has received them. Message stability for a given message M means that M has been seen by everyone in the cluster.
-
-    -->
+    <!-- GMS requisit -->
     <pbcast.GMS print_local_addr="true" join_timeout="2000"
-                view_bundling="true"/> <!-- GMS requisit -->
+                view_bundling="true"/>
+    <!-- FC was separated into MFC (Multicast Flow Control) and Unicast Flow Control (UFC).
+        The reason was that multicast flow control should not be impeded by unicast flow control, and vice versa. -->
     <UFC max_credits="2M"
-         min_threshold="0.4"/> <!-- Flow control requisit. Give credits to max tries to send messages -->
+         min_threshold="0.4"/>
     <MFC max_credits="2M"
-         min_threshold="0.4"/> <!-- Flow control requisit. Give credits to max tries to send messages -->
-    <!--
-    FC was separated into MFC (Multicast Flow Control) and Unicast Flow Control (UFC). The reason was that multicast
-    flow control should not be impeded by unicast flow control, and vice versa.
-    -->
-    <RSVP resend_interval="2000" timeout="10000" throw_exception_on_timeout="true"/> <!-- Increase confiability -->
+         min_threshold="0.4"/>
+    <!-- Increase confiability on transferences
+         The RSVP protocol is not a reliable delivery protocol per se, but augments reliable protocols
+         such as NAKACK, UNICAST or UNICAST2. It should be placed somewhere above these in the stack. -->
+    <RSVP resend_interval="2000" timeout="10000" throw_exception_on_timeout="true"/>
     <FRAG2/>
+    <!-- STATE_TRANSFER is the existing transfer protocol, which transfers byte[] buffers around.
+        However, at the state provider's side, JGroups creates an output stream over the byte[] buffer,
+        and passes the ouput stream to the getState(OutputStream) callback, and at the state requester's side,
+        an input stream is created and passed to the setState(InputStream) callback. -->
     <pbcast.STATE_TRANSFER/>
+    <!-- Requisit of encrypt -->
     <ENCRYPT encrypt_entire_message="false"
              sym_init="128" sym_algorithm="AES/ECB/PKCS5Padding"
-             asym_init="512" asym_algorithm="RSA"/> <!-- Requisit of encrypt -->
+             asym_init="512" asym_algorithm="RSA"/>
     <!-- pbcast.FLUSH  /-->
 </config>

@@ -115,8 +115,10 @@ public class Bank extends ReceiverAdapter implements Serializable {
      */
     public void addAccount(Account a) {
         a.addToExtract("\n----------------------------\nDEPÓSITO\n"
-                + "----------------------------\nValor: R$ " + a.getBalance() + "\nMeu novo saldo: R$ "
-                + (a.getBalance()) + "\n----------------------------\n");
+                + "----------------------------"
+                + "\nValor: R$ " + a.getBalance()
+                + "\nMeu novo saldo: R$ " + (a.getBalance())
+                + "\n----------------------------\n");
         this.allAccounts.put(a.getAccountNumber(), a);
     }
 
