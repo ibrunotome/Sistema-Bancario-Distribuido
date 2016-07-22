@@ -345,7 +345,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      */
     private Address chooseAddress() {
         Address choosenOne = this.channel.getView().getMembers().get(0);
-        System.out.println("\nEu :" + this.channel.getAddress().toString());
+        System.out.println("\nEu: " + this.channel.getAddress().toString());
 
         int choosen = 0;
         int totalMembers = this.channel.getView().getMembers().size();
@@ -356,12 +356,11 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             while ((choosenOne == this.channel.getAddress())) {
                 choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
                 choosenOne = this.channel.getView().getMembers().get(choosen);
-                System.out.println("entrei :" + choosenOne.toString());
+                System.out.println("Entrei: " + choosenOne.toString());
             }
         } else {
             choosenOne = this.channel.getView().getMembers().get(choosen);
         }
-//        System.out.println("vacaFIM :"+choosenOne.toString());
 
         return choosenOne;
     }

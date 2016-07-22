@@ -1,9 +1,10 @@
 package models;
 
 import org.jgroups.Address;
-import org.jgroups.stack.AddressGenerator;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Struct to most used data
@@ -104,4 +105,5 @@ public class Data implements Serializable {
 
         return line;
     }
+
 }
