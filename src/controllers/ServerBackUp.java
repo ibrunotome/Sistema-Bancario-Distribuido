@@ -54,6 +54,10 @@ public class ServerBackUp extends ReceiverAdapter implements Serializable{
                 }
 
                 break;
+            case BACKUP_UPDATE_STATE:
+                this.BCBackUp.setAllAccounts(data.getAllAccounts());
+                System.out.println("Estado atual do banco salvo com sucesso");
+                break;
         }
 
 

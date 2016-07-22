@@ -159,11 +159,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
         Data data = (Data) message.getObject();
         Account accountReceived = data.getAccountAux();
-        System.out.println("\nTag: " + data.getProtocolTag());
-        System.out.println("\nBanco: " + sender);
-        System.out.println("\nTela: " + data.getSender());
 
-        //System.out.println("\n\nRecebida: \n "+data.toString());
 
         switch (data.getProtocolTag()) {
             case SCREEN_TRANSFER:
@@ -278,7 +274,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 MessageAlertTag signupTag = this.signUp(accountReceived);
                 accountReceived.setAlertTag(signupTag);
-                System.out.println("\n\nALERT_TAG: \n " + accountReceived.getAlertTag().toString());
+               // System.out.println("\n\nALERT_TAG: \n " + accountReceived.getAlertTag().toString());
                 data.setAccountAux(accountReceived);
                 response = new Message(sender, data);
                 try {
@@ -330,6 +326,18 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if(this.channelBank.getView().getMembers().size() == 2){
+                        data.setAllAccounts(BCBank.getAllAccounts());
+                        data.setProtocolTag(ProtocolTag.BACKUP_UPDATE_STATE);
+                        response = new Message(null, data);
+                        response.setFlag(Message.Flag.RSVP, Message.Flag.OOB);
+
+                        try {
+                            this.channelBackUp.send(response);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 break;
             case SERVER_LOGIN:
@@ -344,9 +352,11 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 break;
             case SERVER_LOGIN_RECEIVED:
                 this.BCBank.setAllAccounts(data.getAllAccounts());
+                System.out.println("login banco efetuado com sucesso de um BANCO");
                 break;
             case BACKUP_LOGIN:
                 this.BCBank.setAllAccounts(data.getAllAccounts());
+                System.out.println("login banco efetuado com sucesso da PERSISTENCIA");
                 break;
             default:
                 break;
