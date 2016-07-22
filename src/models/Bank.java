@@ -17,13 +17,13 @@ public class Bank extends ReceiverAdapter implements Serializable {
     private Hashtable<Integer, Account> allAccounts = new Hashtable();
 
     public Bank() throws Exception {
-        initalizeBank();
+
     }
 
     /**
      * Initialize the bank if there isn't an object bank serialized
      */
-    private void initalizeBank() {
+    public void initalizeBank() {
         File f = new File("allAccounts.ser");
         if (f.exists() && !f.isDirectory()) {
             System.out.println("Banco existe, carregando snapshot");

@@ -4,6 +4,7 @@ import org.jgroups.Address;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class Data implements Serializable {
     private ProtocolTag protocolTag;
     private String text;
     private Address sender;
+    private Hashtable<Integer, Account> allAccounts = new Hashtable();
 
     public Data() {
 
@@ -77,6 +79,15 @@ public class Data implements Serializable {
 
     public void setSender(Address sender) {
         this.sender = sender;
+    }
+
+
+    public Hashtable<Integer, Account> getAllAccounts() {
+        return allAccounts;
+    }
+
+    public void setAllAccounts(Hashtable<Integer, Account> allAccounts) {
+        this.allAccounts = allAccounts;
     }
 
 

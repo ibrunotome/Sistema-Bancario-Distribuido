@@ -19,6 +19,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
     private Bank BCBank = new Bank();
     private JChannel channelScreen;
     private JChannel channelBank;
+    private JChannel channelBackUp;
 
     public ServerBank() throws Exception {
         this.start();
@@ -330,9 +331,22 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                         e.printStackTrace();
                     }
                 }
-
                 break;
             case SERVER_LOGIN:
+                data.setAllAccounts(BCBank.getAllAccounts());
+                data.setProtocolTag(ProtocolTag.SERVER_LOGIN_RECEIVED);
+                response = new Message(sender, data);
+                try {
+                    this.channelBank.send(response);
+                } catch (Exception e) {
+                    System.err.println("Falhou ao enviar mensagem no SERVER_LOGIN");
+                }
+                break;
+            case SERVER_LOGIN_RECEIVED:
+                this.BCBank.setAllAccounts(data.getAllAccounts());
+                break;
+            case BACKUP_LOGIN:
+                this.BCBank.setAllAccounts(data.getAllAccounts());
                 break;
             default:
                 break;
@@ -358,13 +372,44 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         this.channelBank.setReceiver(this);
         this.channelBank.connect("BCBankGroup");
 
+        // Channel BankBackUp cluster
+        this.channelBackUp = new JChannel("jgroups-settings.xml");
+        this.channelBackUp.setDiscardOwnMessages(false);
+        this.channelBackUp.setReceiver(this);
+        this.channelBackUp.connect("BCBankBackUp");
+
+        if(channelBank.getView().getMembers().size() == 1){
+
+            Data data = new Data();
+            data.setProtocolTag(ProtocolTag.BACKUP_LOGIN);
+            Message request = new Message(null, data);
+            request.setFlag(Message.Flag.RSVP, Message.Flag.OOB);
+            try {
+                this.channelBackUp.send(request);
+            } catch (Exception e) {
+                System.err.println("Falhou ao enviar mensagem no SERVER_LOGIN");
+            }
+        }else {
+            Data data = new Data();
+            data.setProtocolTag(ProtocolTag.SERVER_LOGIN);
+            Message request = new Message(null, data);
+            request.setFlag(Message.Flag.RSVP, Message.Flag.OOB);
+            try {
+                this.channelBank.send(request);
+            } catch (Exception e) {
+                System.err.println("Falhou ao enviar mensagem no SERVER_LOGIN");
+            }
+        }
+
         boolean CONTINUE = true;
 
         while (CONTINUE) {
             Thread.sleep(500);
         }
+
         this.channelScreen.close();
         this.channelBank.close();
+        this.channelBackUp.close();
     }
 
     public static void main(String args[]) throws Exception {
