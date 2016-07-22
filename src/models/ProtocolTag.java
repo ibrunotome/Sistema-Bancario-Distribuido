@@ -15,6 +15,5 @@ public enum ProtocolTag {
     SCREEN_SINGUP,
     SCREEN_TO_STRING_SERVER,
     SERVER_TRANSFER,
-    SERVER_LOGIN,
-
+    SERVER_LOGIN
 }
