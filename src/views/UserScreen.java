@@ -218,7 +218,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
               tag SIGNUP to try to make a new Account in the system and get the
               response back into the receive method in this class
              */
-
             Address memberOfBank = this.chooseAddress();
 
             Data data = new Data();
@@ -284,7 +283,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-
         });
 
         JButton menu = new JButton("Menu");
@@ -346,8 +344,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * and return the choosenOne.
      */
     private Address chooseAddress() {
-        Address chosenOne = this.channel.getView().getMembers().get(0);
-
+        Address choosenOne = this.channel.getView().getMembers().get(0);
         System.out.println("\nEu :" + this.channel.getAddress().toString());
 
         int choosen = 0;
@@ -356,17 +353,17 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         System.out.println("\nMembros: " + this.channel.getView().getMembers().toString());
 
         if (totalMembers > 2) {
-            while ((chosenOne == this.channel.getAddress())) {
+            while ((choosenOne == this.channel.getAddress())) {
                 choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
-                chosenOne = this.channel.getView().getMembers().get(choosen);
-                System.out.println("entrei :" + chosenOne.toString());
+                choosenOne = this.channel.getView().getMembers().get(choosen);
+                System.out.println("entrei :" + choosenOne.toString());
             }
         } else {
-            chosenOne = this.channel.getView().getMembers().get(choosen);
+            choosenOne = this.channel.getView().getMembers().get(choosen);
         }
-//        System.out.println("vacaFIM :"+chosenOne.toString());
+//        System.out.println("vacaFIM :"+choosenOne.toString());
 
-        return chosenOne;
+        return choosenOne;
     }
 
     @Override

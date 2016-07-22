@@ -19,5 +19,6 @@ public enum MessageAlertTag implements Serializable {
     TRANSFER_ERROR_SAME_ACCOUNT,
     SIGNUP_SUCCESSFUL,
     SIGNUP_ERROR,
-    UNKNOWN_ERROR
+    UNKNOWN_ERROR,
+    UNAVAILABLE_BANK
 }

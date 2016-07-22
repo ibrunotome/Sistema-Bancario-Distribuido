@@ -176,11 +176,22 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 message = new Message(null, data);
                 message.setFlag(Message.Flag.RSVP, Message.Flag.OOB);
 
-                try {
-                    this.channelBank.send(message);
-                } catch (Exception e) {
+                if (this.channelBank.getView().getMembers().size() >= 2) {
+                    try {
+                        this.channelBank.send(message);
+                    } catch (Exception e) {
+                        data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
+                        data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
+                        message = new Message(sender, data);
+                        try {
+                            this.channelScreen.send(message);
+                        } catch (Exception e1) {
+                            System.err.println("Falhou ao enviar mensagem no SCREEN_TRANSFER");
+                        }
+                    }
+                } else {
                     data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
-                    data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.UNAVAILABLE_BANK);
                     message = new Message(sender, data);
                     try {
                         this.channelScreen.send(message);
@@ -188,6 +199,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                         System.err.println("Falhou ao enviar mensagem no SCREEN_TRANSFER");
                     }
                 }
+
 
                 break;
             case SCREEN_LOGIN:

@@ -32,6 +32,8 @@ public class MessageAlert implements Serializable {
                 return "ERRO: Conta inexistente";
             case UNKNOWN_ERROR:
                 return "ERRO: Não foi possível enviar a última mensagem";
+            case UNAVAILABLE_BANK:
+                return "Transferência indisponível no momento";
             case SIGNUP_SUCCESSFUL:
                 return "Cadastrado com sucesso";
             case SIGNUP_ERROR:
