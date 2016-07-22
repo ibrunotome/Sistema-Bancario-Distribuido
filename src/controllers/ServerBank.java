@@ -5,7 +5,6 @@ import org.jgroups.*;
 
 import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Controller that makes the comunications between the UserScreen view

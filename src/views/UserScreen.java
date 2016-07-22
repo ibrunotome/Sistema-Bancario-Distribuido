@@ -502,7 +502,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * Prepare the GUI for the user, showing the login screen
      *
      * @param args
-     * @throws Exception
+     * @throws Exception of channel methods
      */
     public static void main(String args[]) throws Exception {
         // Use this property because an error reporting the unavailability of IPV6
