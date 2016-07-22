@@ -166,7 +166,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
             Address memberOfBank = this.chooseAddress();
             Message request = new Message(memberOfBank, data);
 
-
             try {
                 this.channel.send(request);
             } catch (Exception e1) {
@@ -396,7 +395,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
                   the global variable theUser with the account received in the message
                   and show the main menu to this user
                  */
-
                 this.statusLabel.setText(MessageAlert.toString(accountReceive.getAlertTag()));
                 this.statusLabel.setVisible(true);
                 if (accountReceive.getAlertTag() == MessageAlertTag.LOGIN_SUCCESSFUL) {
@@ -489,7 +487,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * @throws Exception
      */
     private void start() throws Exception {
-        this.channel = new JChannel("xml-configs/udp.xml");
+        this.channel = new JChannel("jgroups-settings.xml");
         this.channel.setDiscardOwnMessages(true);
         this.channel.setReceiver(this);
         this.channel.connect("BCBScreenGroup");

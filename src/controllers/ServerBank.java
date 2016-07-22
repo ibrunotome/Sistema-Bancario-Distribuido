@@ -106,7 +106,6 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
 
     private MessageAlertTag signUp(Account newUser) {
-
         if (this.BCBank.getAllAccounts().get(newUser.getAccountNumber()) == null) {
             this.BCBank.addAccount(newUser);
             return MessageAlertTag.SIGNUP_SUCCESSFUL;
@@ -132,8 +131,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      * @return String
      */
     private String getExtract(Account a) {
-        this.BCBank.getAllAccounts().get(a.getAccountNumber());
-        return a.getExtractToString();
+        return this.BCBank.getAllAccounts().get(a.getAccountNumber()).getExtractToString();
     }
 
     /**
@@ -181,14 +179,14 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
                 try {
                     this.channelBank.send(message);
-                } catch (Exception e1) {
+                } catch (Exception e) {
                     data.setProtocolTag(ProtocolTag.SCREEN_TRANSFER);
-                    data.getAccountAux().setAlertTag(MessageAlertTag.TRANSFER_ERROR_TIMEOUT);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
                     message = new Message(sender, data);
                     try {
                         this.channelScreen.send(message);
-                    } catch (Exception e) {
-                        System.err.println("Falhou ao enviar mensagem");
+                    } catch (Exception e1) {
+                        System.err.println("Falhou ao enviar mensagem no SCREEN_TRANSFER");
                     }
                 }
 
@@ -202,12 +200,19 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 accountReceived = this.login(accountReceived);
                 data.setAccountAux(accountReceived);
-                Message respond = new Message(sender, data);
+                Message response = new Message(sender, data);
 
                 try {
-                    this.channelScreen.send(respond);   //envia mensagem unicast pro dst ou se for null, sera multicast
+                    this.channelScreen.send(response);   //envia mensagem unicast pro dst ou se for null, sera multicast
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    data.setProtocolTag(ProtocolTag.SCREEN_LOGIN);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
+                    message = new Message(sender, data);
+                    try {
+                        this.channelScreen.send(message);
+                    } catch (Exception e1) {
+                        System.err.println("Falhou ao enviar mensagem no SCREEN_LOGIN");
+                    }
                 }
                 break;
             case SCREEN_BALANCE:
@@ -217,11 +222,18 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 String balance = this.getBalance(accountReceived);
                 data.setText(balance);
-                respond = new Message(sender, data);
+                response = new Message(sender, data);
                 try {
-                    this.channelScreen.send(respond);
+                    this.channelScreen.send(response);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    data.setProtocolTag(ProtocolTag.SCREEN_BALANCE);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
+                    message = new Message(sender, data);
+                    try {
+                        this.channelScreen.send(message);
+                    } catch (Exception e1) {
+                        System.err.println("Falhou ao enviar mensagem no SCREEN_BALANCE");
+                    }
                 }
                 break;
             case SCREEN_EXTRACT:
@@ -231,11 +243,18 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 String extract = this.getExtract(accountReceived);
                 data.setText(extract);
-                respond = new Message(sender, data);
+                response = new Message(sender, data);
                 try {
-                    this.channelScreen.send(respond);
+                    this.channelScreen.send(response);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    data.setProtocolTag(ProtocolTag.SCREEN_EXTRACT);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
+                    message = new Message(sender, data);
+                    try {
+                        this.channelScreen.send(message);
+                    } catch (Exception e1) {
+                        System.err.println("Falhou ao enviar mensagem no SCREEN_EXTRACT");
+                    }
                 }
                 break;
             case SCREEN_SINGUP:
@@ -249,12 +268,18 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 accountReceived.setAlertTag(signupTag);
                 System.out.println("\n\nALERT_TAG: \n " + accountReceived.getAlertTag().toString());
                 data.setAccountAux(accountReceived);
-                respond = new Message(sender, data);
-
+                response = new Message(sender, data);
                 try {
-                    this.channelScreen.send(respond);
+                    this.channelScreen.send(response);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    data.setProtocolTag(ProtocolTag.SCREEN_SINGUP);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
+                    message = new Message(sender, data);
+                    try {
+                        this.channelScreen.send(message);
+                    } catch (Exception e1) {
+                        System.err.println("Falhou ao enviar mensagem no SCREEN_SINGUP");
+                    }
                 }
                 break;
             case SCREEN_TO_STRING_SERVER:
@@ -263,11 +288,18 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                   send the data object back to the UserScreen with the total bank amount of cash text
                  */
                 data.setText(this.toString());
-                respond = new Message(sender, data);
+                response = new Message(sender, data);
                 try {
-                    this.channelScreen.send(respond);
+                    this.channelScreen.send(response);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    data.setProtocolTag(ProtocolTag.SCREEN_TO_STRING_SERVER);
+                    data.getAccountAux().setAlertTag(MessageAlertTag.UNKNOWN_ERROR);
+                    message = new Message(sender, data);
+                    try {
+                        this.channelScreen.send(message);
+                    } catch (Exception e1) {
+                        System.err.println("Falhou ao enviar mensagem no SCREEN_TO_STRING_SERVER");
+                    }
                 }
                 break;
             case SERVER_TRANSFER:
@@ -280,9 +312,9 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 if (sender == this.channelBank.getAddress()) {
                     accountReceived.setAlertTag(transferenceTag);
                     data.setAccountAux(accountReceived);
-                    respond = new Message(data.getSender(), data);
+                    response = new Message(data.getSender(), data);
                     try {
-                        this.channelScreen.send(respond);
+                        this.channelScreen.send(response);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -304,13 +336,13 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     private void start() throws Exception {
         // Channel Screen cluster
-        this.channelScreen = new JChannel("xml-configs/udp.xml");
+        this.channelScreen = new JChannel("jgroups-settings.xml");
         this.channelScreen.setDiscardOwnMessages(true);
         this.channelScreen.setReceiver(this);
         this.channelScreen.connect("BCBScreenGroup");
 
         // Channel Bank cluster
-        this.channelBank = new JChannel("xml-configs/udp.xml");
+        this.channelBank = new JChannel("jgroups-settings.xml");
         this.channelBank.setDiscardOwnMessages(false);
         this.channelBank.setReceiver(this);
         this.channelBank.connect("BCBankGroup");

@@ -30,8 +30,8 @@ public class MessageAlert implements Serializable {
                 return "ERRO: Saldo insuficiente";
             case TRANSFER_ERROR_ACCOUNT:
                 return "ERRO: Conta inexistente";
-            case TRANSFER_ERROR_TIMEOUT:
-                return "ERRO: Não foi possível fazer a transferência";
+            case UNKNOWN_ERROR:
+                return "ERRO: Não foi possível enviar a última mensagem";
             case SIGNUP_SUCCESSFUL:
                 return "Cadastrado com sucesso";
             case SIGNUP_ERROR:
