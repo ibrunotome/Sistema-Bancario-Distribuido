@@ -505,6 +505,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
      * @throws Exception
      */
     public static void main(String args[]) throws Exception {
+        // Use this property because an error reporting the unavailability of IPV6
         System.setProperty("java.net.preferIPv4Stack", "true");
         new UserScreen();
 
