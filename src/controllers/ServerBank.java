@@ -350,7 +350,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         boolean CONTINUE = true;
 
         while (CONTINUE) {
-            Thread.sleep(100);
+            Thread.sleep(500);
         }
         this.channelScreen.close();
         this.channelBank.close();

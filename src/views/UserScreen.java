@@ -493,7 +493,7 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         this.channel.connect("BCBScreenGroup");
         boolean CONTINUE = true;
         while (CONTINUE) {
-            Thread.sleep(100);
+            Thread.sleep(500);
         }
         this.channel.close();
     }
