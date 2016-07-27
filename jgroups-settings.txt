@@ -78,7 +78,7 @@
     <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
                    max_bytes="4M"/>
     <!-- GMS requisit -->
-    <pbcast.GMS print_local_addr="true" join_timeout="2000"
+    <pbcast.GMS print_local_addr="true" join_timeout="8000"
                 view_bundling="true"/>
     <!-- FC was separated into MFC (Multicast Flow Control) and Unicast Flow Control (UFC).
         The reason was that multicast flow control should not be impeded by unicast flow control, and vice versa. -->

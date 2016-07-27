@@ -274,7 +274,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                  */
                 MessageAlertTag signupTag = this.signUp(accountReceived);
                 accountReceived.setAlertTag(signupTag);
-               // System.out.println("\n\nALERT_TAG: \n " + accountReceived.getAlertTag().toString());
+                // System.out.println("\n\nALERT_TAG: \n " + accountReceived.getAlertTag().toString());
                 data.setAccountAux(accountReceived);
                 response = new Message(sender, data);
                 try {
@@ -326,12 +326,14 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(this.channelBank.getView().getMembers().size() == 2){
+                    /*
+                        If exists only two members in the bank, its time to make a backup!
+                     */
+                    if (this.channelBank.getView().getMembers().size() == 2) {
                         data.setAllAccounts(BCBank.getAllAccounts());
                         data.setProtocolTag(ProtocolTag.BACKUP_UPDATE_STATE);
                         response = new Message(null, data);
                         response.setFlag(Message.Flag.RSVP, Message.Flag.OOB);
-
                         try {
                             this.channelBackUp.send(response);
                         } catch (Exception e) {
@@ -341,7 +343,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
                 }
                 break;
             case SERVER_LOGIN:
-                data.setAllAccounts(BCBank.getAllAccounts());
+                /*
+                    Call the login
+                 */
+                data.setAllAccounts(this.BCBank.getAllAccounts());
                 data.setProtocolTag(ProtocolTag.SERVER_LOGIN_RECEIVED);
                 response = new Message(sender, data);
                 try {
@@ -388,8 +393,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
         this.channelBackUp.setReceiver(this);
         this.channelBackUp.connect("BCBankBackUp");
 
-        if(channelBank.getView().getMembers().size() == 1){
-
+        /*
+            If the view have only one member, restores the backup from BCBankBackUp
+         */
+        if (this.channelBank.getView().getMembers().size() == 1) {
             Data data = new Data();
             data.setProtocolTag(ProtocolTag.BACKUP_LOGIN);
             Message request = new Message(null, data);
@@ -399,7 +406,7 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
             } catch (Exception e) {
                 System.err.println("Falhou ao enviar mensagem no SERVER_LOGIN");
             }
-        }else {
+        } else {
             Data data = new Data();
             data.setProtocolTag(ProtocolTag.SERVER_LOGIN);
             Message request = new Message(null, data);

@@ -1,11 +1,8 @@
 package models;
 
 import org.jgroups.Address;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 /**
  * Struct to most used data
@@ -21,7 +18,7 @@ public class Data implements Serializable {
     private ProtocolTag protocolTag;
     private String text;
     private Address sender;
-    private Hashtable<Integer, Account> allAccounts = new Hashtable();
+    private Hashtable<Integer, Account> allAccounts = new Hashtable<>();
 
     public Data() {
 
@@ -53,16 +50,8 @@ public class Data implements Serializable {
         return accountNumberToTransfer;
     }
 
-    public void setAccountNumberToTransfer(int accountNumberToTransfer) {
-        this.accountNumberToTransfer = accountNumberToTransfer;
-    }
-
     public Double getAmount() {
         return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
     }
 
     public String getText() {
