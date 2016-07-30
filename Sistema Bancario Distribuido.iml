@@ -17,5 +17,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jgroups-3.6.4.Final (2)" level="project" />
   </component>
 </module>

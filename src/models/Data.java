@@ -11,6 +11,7 @@ import java.util.Hashtable;
  * @author Cláudio Menezes
  * @since 11/07/2016
  */
+@SuppressWarnings("unchecked")
 public class Data implements Serializable {
     private Account accountAux;
     private int accountNumberToTransfer;

@@ -34,6 +34,7 @@ public class ServerBackUp extends ReceiverAdapter implements Serializable {
 
         while (CONTINUE) {
             Thread.sleep(500);
+            System.out.println("banco-persistencia: " + this.channelBackUp.getView().getMembers().toString());
         }
     }
 
@@ -62,6 +63,7 @@ public class ServerBackUp extends ReceiverAdapter implements Serializable {
                     Save the current state of the Bank when user makes a trasnference
                  */
                 this.BCBackUp.setAllAccounts(data.getAllAccounts());
+                this.BCBackUp.saveState();
                 System.out.println("Estado atual do banco salvo com sucesso");
                 break;
         }
@@ -72,6 +74,5 @@ public class ServerBackUp extends ReceiverAdapter implements Serializable {
         System.setProperty("java.net.preferIPv4Stack", "true");
         new ServerBackUp();
     }
-
 
 }

@@ -40,8 +40,6 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     private JPanel controlPanel;
 
     public UserScreen() throws Exception {
-        this.prepareGUI();
-        this.login();
         this.start();
     }
 
@@ -352,15 +350,12 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
 
         System.out.println("\nMembros: " + this.channel.getView().getMembers().toString());
 
-        if (totalMembers > 2) {
-            while ((choosenOne == this.channel.getAddress())) {
-                choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
-                choosenOne = this.channel.getView().getMembers().get(choosen);
-                System.out.println("Entrei: " + choosenOne.toString());
-            }
-        } else {
+        while ((choosenOne.equals(this.channel.getAddress()))) {
+            choosen = ThreadLocalRandom.current().nextInt(0, totalMembers);
             choosenOne = this.channel.getView().getMembers().get(choosen);
         }
+
+        System.out.println("\nEscolheu o banco: " + choosenOne.toString());
 
         return choosenOne;
     }
@@ -368,8 +363,8 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
     @Override
     public void receive(Message message) {
 
-        //System.out.println("DEBUG: UserScreen.receive()=>message.toString(): "+message.toString());
-        //System.out.println("DEBUG: UserScreen.receive()=>message.getObject().toString(): "+(message.getObject()).toString());
+        System.out.println("DEBUG: UserScreen.receive()=>message.toString(): " + message.toString());
+        System.out.println("DEBUG: UserScreen.receive()=>message.getObject().toString(): " + (message.getObject()).toString());
 
         Data data = (Data) (message.getObject());
         Account accountReceive = data.getAccountAux();
@@ -487,9 +482,34 @@ public class UserScreen extends ReceiverAdapter implements Serializable {
         this.channel.setDiscardOwnMessages(true);
         this.channel.setReceiver(this);
         this.channel.connect("BCBScreenGroup");
+
+        while (this.channel.getView().getMembers().size() == 1) {
+            Thread.sleep(500);
+            System.out.println("Aguardando um banco...");
+            // Waiting a bank enter into the channel
+        }
+
+        // Prepare the GUI
+        this.prepareGUI();
+        this.login();
+
         boolean CONTINUE = true;
         while (CONTINUE) {
             Thread.sleep(500);
+            System.out.println("\nEu tela-banco: " + this.channel.getAddress().toString());
+            System.out.println("tela-banco: " + this.channel.getView().getMembers().toString());
+
+            if (this.channel.getView().getMembers().size() == 1) {
+                while (this.channel.getView().getMembers().size() == 1) {
+                    this.mainFrame.disable();
+                    this.statusLabel.setText("Banco indisponível no momento");
+                    this.statusLabel.setVisible(true);
+                }
+                this.mainFrame.enable();
+                this.statusLabel.setText("");
+                this.statusLabel.setVisible(true);
+            }
+
         }
         this.channel.close();
     }

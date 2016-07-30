@@ -75,7 +75,7 @@
     <!-- To serve potential retransmission requests, a member has to store received messages until
         it is known that every member in the cluster has received them.
         Message stability for a given message M means that M has been seen by everyone in the cluster. -->
-    <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
+    <pbcast.STABLE stability_delay="1000" desired_avg_gossip="5000"
                    max_bytes="4M"/>
     <!-- GMS requisit -->
     <pbcast.GMS print_local_addr="true" join_timeout="8000"

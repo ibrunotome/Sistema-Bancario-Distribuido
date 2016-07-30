@@ -152,8 +152,8 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
      */
     public void receive(Message message) {
 
-//        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): " + message.toString());
-//        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): " + (message.getObject()).toString());
+        System.out.println("DEBUG: ServerBank.receive()=>message.toString(): " + message.toString());
+        System.out.println("DEBUG: ServerBank.receive()=>message.getObject().toString(): " + (message.getObject()).toString());
 
         Address sender = message.getSrc();
 
@@ -422,6 +422,10 @@ public class ServerBank extends ReceiverAdapter implements Serializable {
 
         while (CONTINUE) {
             Thread.sleep(500);
+            System.out.println("\nEu banco-tela: " + this.channelScreen.getAddress().toString());
+            System.out.println("banco-banco: " + this.channelBank.getView().getMembers().toString());
+            System.out.println("banco-tela: " + this.channelScreen.getView().getMembers().toString());
+            System.out.println("banco-persistencia: " + this.channelBackUp.getView().getMembers().toString());
         }
 
         this.channelScreen.close();

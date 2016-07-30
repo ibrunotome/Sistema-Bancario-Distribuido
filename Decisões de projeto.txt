@@ -2,3 +2,10 @@
 
 // Instanciar a classe sozinha em outra máquina já é o "separar em máquinas"
 // FC
+
+
+SUGESTÕES DO EVERTHON
+
+Quando desconectar o banco, tratar na interface para ela não fechar
+
+Não exibir a tela enquanto tiver só um cara no getView().getMembers()
