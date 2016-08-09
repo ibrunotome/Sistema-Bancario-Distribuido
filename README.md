@@ -8,7 +8,7 @@ Criação de um sistema bancário distribuído utilizando middleware jgroups. Tr
 
 #### Instruções Para Compilar
 Abra o Terminal e digite:
-- cd <DIRETORIO>
+- cd DIRETORIO
 - Execute o ./persist.sh em uma máquina ou quantas quiser
 - Execute o ./server.sh em duas máquinas ou quantas quiser
 - Execute o ./screen.sh em uma máquina ou quantas quiser
